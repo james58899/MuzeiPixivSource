@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name" translatable="false">Muzei Pixiv Source</string>
+    <string name="source_title" translatable="false">Pixiv</string>
+
+    <!--Activity-->
+    <string name="title_activity_settings">Settings</string>
+
+    <!--Toast-->
+    <string name="login_success">Login successful!</string>
+    <string name="login_fail">Login failed</string>
+
+    <!--Preference-->
+    <string name="pref_title_account">Account</string>
+    <string name="pref_pixiv_sign_in">Login Pixiv</string>
+    <string name="pref_pixiv_sign_out">Logout</string>
+    <string name="pref_pixiv_summary">Login to access full features</string>
+
+    <string name="pref_title_fetch">Fetch</string>
+    <string name="pref_fetch_safe">Safe mode</string>
+    <string name="pref_fetch_safe_summary_on">Does not fetch R18 image</string>
+    <string name="pref_fetch_safe_summary_off">Fetch R18 image</string>
+
+    <string name="pref_fetch_mode">Mode</string>
+    <string name="pref_fetch_mode_dialog">Fetch mode</string>
+    <string name="pref_fetch_mode_top">TOP</string>
+    <string name="pref_fetch_mode_recommend">Recommend</string>
+    <string name="pref_fetch_mode_favorite">Favorite</string>
+
+    <string name="pref_title_muzei" translatable="false">Muzei</string>
+    <string name="pref_muzei_interval">Change interval</string>
+    <string name="pref_muzei_interval_30">30 minute</string>
+    <string name="pref_muzei_interval_60">1 hour</string>
+    <string name="pref_muzei_interval_120">2 hour</string>
+    <string name="pref_muzei_interval_180">3 hour</string>
+    <string name="pref_muzei_interval_360">6 hour</string>
+    <string name="pref_muzei_interval_720">12 hour</string>
+    <string name="pref_muzei_interval_1440">1 day</string>
+    <string name="pref_fetch_origin">Origin image</string>
+    <string name="pref_fetch_origin_summary_on">Download origin image</string>
+    <string name="pref_fetch_origin_summary_off">Download resized image</string>
+
+    <!-- Login -->
+    <string name="title_activity_pixiv_login">Login Pixiv</string>
+    <string name="login_username_hint">Username / Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="error_invalid_username">This username is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="pref_pixiv_sign_out_confirm">Confirm logout?</string>
+</resources>

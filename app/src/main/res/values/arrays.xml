@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_fetch_mode_entities">
+        <item>@string/pref_fetch_mode_top</item>
+        <item>@string/pref_fetch_mode_recommend</item>
+        <item>@string/pref_fetch_mode_favorite</item>
+    </string-array>
+    <string-array name="pref_fetch_mode_value" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_muzei_interval_entities">
+        <item>@string/pref_muzei_interval_30</item>
+        <item>@string/pref_muzei_interval_60</item>
+        <item>@string/pref_muzei_interval_120</item>
+        <item>@string/pref_muzei_interval_180</item>
+        <item>@string/pref_muzei_interval_360</item>
+        <item>@string/pref_muzei_interval_720</item>
+        <item>@string/pref_muzei_interval_1440</item>
+    </string-array>
+    <string-array name="pref_muzei_interval_value" translatable="false">
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+    </string-array>
+</resources>
