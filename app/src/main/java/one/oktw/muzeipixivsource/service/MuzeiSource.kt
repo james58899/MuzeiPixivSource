@@ -11,6 +11,7 @@ import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_SAFE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_DEVICE_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_REFRESH_TOKEN
@@ -45,12 +46,12 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) updateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
-        val original = preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val pixiv = Pixiv(
             token = token,
-            originImage = original,
-            savePath = cacheDir
-        ) // TODO other save path
+            originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false),
+            safety = preference.getBoolean(KEY_FETCH_SAFE, true),
+            savePath = cacheDir // TODO other save path
+        )
 
         try {
             when (preference.getString(KEY_FETCH_MODE, "0").toInt()) {

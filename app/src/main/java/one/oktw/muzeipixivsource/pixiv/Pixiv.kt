@@ -8,7 +8,12 @@ import one.oktw.muzeipixivsource.pixiv.model.Illust
 import java.io.File
 import java.util.*
 
-class Pixiv(private val token: String?, private val originImage: Boolean = false, savePath: File) {
+class Pixiv(
+    private val token: String?,
+    private val originImage: Boolean = false,
+    private val safety: Boolean = true,
+    savePath: File
+) {
     private val savePath = File(savePath, "pixiv").apply { mkdir() } // TODO auto clean cache
 
     fun getFallback() = Fallback.getImages().let(::random).let(::processIllust)
@@ -28,10 +33,15 @@ class Pixiv(private val token: String?, private val originImage: Boolean = false
     fun getBookmark(user: Int, private: Boolean = false): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Bookmark(token, user, private).getImages(90).let(::random).let(::processIllust)
+        return Bookmark(token, user, private).getImages(90)
+            .let(::filterSafety)
+            .let(::random)
+            .let(::processIllust)
     }
 
-    private fun random(list: ArrayList<Illust>) = list[Random().nextInt(list.size)]
+    private fun filterSafety(list: List<Illust>) = if (safety) list.filter { it.sanityLevel <= 4 } else list
+
+    private fun random(list: List<Illust>) = list[Random().nextInt(list.size)]
 
     private fun processIllust(illust: Illust): DataImageInfo {
         // check page count then get image url
