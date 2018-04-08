@@ -12,7 +12,7 @@ class Pixiv(
     private val size: Boolean = true,
     savePath: File
 ) {
-    private val savePath = File(savePath, "pixiv").apply { mkdir() } // TODO auto clean cache
+    private val savePath = File(savePath, "pixiv").apply { mkdir() }
 
     fun getFallback() = Fallback.getImages().let(::random).let(::processIllust)
 
@@ -34,8 +34,12 @@ class Pixiv(
         return Bookmark(token, user, private).getImages(90).let(::processList)
     }
 
-    private fun processList(list: List<Illust>) =
-        list.let(::filterSafety).let(::filterSize).let(::random).let(::processIllust)
+    private fun processList(list: List<Illust>): DataImageInfo {
+        return list.let(::filterSafety)
+            .let(::filterSize)
+            .let(::random)
+            .let(::processIllust)
+    }
 
     private fun filterSafety(list: List<Illust>) = if (safety) list.filter { it.sanityLevel <= 4 } else list
 
