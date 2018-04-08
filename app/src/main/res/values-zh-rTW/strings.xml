@@ -36,4 +36,6 @@
     <string name="error_field_required">請填寫這個欄位</string>
     <string name="pref_pixiv_sign_out">登出</string>
     <string name="pref_pixiv_sign_out_confirm">確定登出嗎？</string>
+    <string name="pref_fetch_size">過濾大小</string>
+    <string name="pref_fetch_size_summary">排除過小的圖片</string>
 </resources>

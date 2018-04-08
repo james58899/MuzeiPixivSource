@@ -18,6 +18,10 @@
                 android:title="@string/pref_fetch_safe" android:key="fetch_safe"
                 android:summaryOn="@string/pref_fetch_safe_summary_on"
                 android:summaryOff="@string/pref_fetch_safe_summary_off"/>
+        <SwitchPreference
+                android:defaultValue="true"
+                android:title="@string/pref_fetch_size" android:key="fetch_size"
+                android:summary="@string/pref_fetch_size_summary"/>
         <ListPreference
                 android:defaultValue="0"
                 android:title="@string/pref_fetch_mode" android:entries="@array/pref_fetch_mode_entities"

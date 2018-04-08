@@ -21,6 +21,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH_ORIGIN = "fetch_origin"
         const val KEY_FETCH_SAFE = "fetch_safe"
         const val KEY_FETCH_MODE = "fetch_mode"
+        const val KEY_FETCH_FILTER_SIZE = "fetch_size"
         const val KEY_MUZEI_CHANGE_INTERVAL = "muzei_interval"
         const val KEY_PIXIV_ACCESS_TOKEN = "pixiv_access_token"
         const val KEY_PIXIV_REFRESH_TOKEN = "pixiv_refresh_token"
@@ -78,7 +79,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         account.summary = pref.getString(KEY_PIXIV_USER_NAME, getString(R.string.pref_pixiv_summary))
-
     }
 
     private fun onLogin(result: Int, data: Intent?) {

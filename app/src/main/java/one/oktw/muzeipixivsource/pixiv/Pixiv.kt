@@ -12,6 +12,7 @@ class Pixiv(
     private val token: String?,
     private val originImage: Boolean = false,
     private val safety: Boolean = true,
+    private val size: Boolean = true,
     savePath: File
 ) {
     private val savePath = File(savePath, "pixiv").apply { mkdir() } // TODO auto clean cache
@@ -21,25 +22,27 @@ class Pixiv(
     fun getRanking(): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Ranking(token).getImages(60).let(::random).let(::processIllust)
+        return Ranking(token).getImages(60).let(::processList)
     }
 
     fun getRecommend(): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Recommend(token).getImages(30).let(::random).let(::processIllust)
+        return Recommend(token).getImages(30).let(::processList)
     }
 
     fun getBookmark(user: Int, private: Boolean = false): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Bookmark(token, user, private).getImages(90)
-            .let(::filterSafety)
-            .let(::random)
-            .let(::processIllust)
+        return Bookmark(token, user, private).getImages(90).let(::processList)
     }
 
+    private fun processList(list: List<Illust>) =
+        list.let(::filterSafety).let(::filterSize).let(::random).let(::processIllust)
+
     private fun filterSafety(list: List<Illust>) = if (safety) list.filter { it.sanityLevel <= 4 } else list
+
+    private fun filterSize(list: List<Illust>) = if (size) list.filter { it.height > 1000 } else list
 
     private fun random(list: List<Illust>) = list[Random().nextInt(list.size)]
 

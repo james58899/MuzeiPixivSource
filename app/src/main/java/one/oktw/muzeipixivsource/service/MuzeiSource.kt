@@ -9,6 +9,7 @@ import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
 import one.oktw.muzeipixivsource.R
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_FILTER_SIZE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_SAFE
@@ -26,7 +27,10 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
     companion object {
         private const val MINUTE = 60000
+
         private const val KEY_LAST_IMAGE = "last_image"
+
+        private const val MODE_FALLBACK = -1
         private const val MODE_RANKING = 0
         private const val MODE_RECOMMEND = 1
         private const val MODE_FAVORITE = 2
@@ -46,15 +50,18 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) updateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
+        val mode = preference.getString(KEY_FETCH_MODE, "0").toInt()
         val pixiv = Pixiv(
             token = token,
             originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false),
             safety = preference.getBoolean(KEY_FETCH_SAFE, true),
+            size = preference.getBoolean(KEY_FETCH_FILTER_SIZE, true),
             savePath = cacheDir // TODO other save path
         )
 
         try {
-            when (preference.getString(KEY_FETCH_MODE, "0").toInt()) {
+            when (mode) {
+                MODE_FALLBACK -> pixiv.getFallback().let(::publish)
                 MODE_RANKING -> pixiv.getRanking().let(::publish)
                 MODE_RECOMMEND -> pixiv.getRecommend().let(::publish)
                 MODE_FAVORITE -> pixiv.getBookmark(preference.getInt(KEY_PIXIV_USER_ID, -1)).let(::publish)
@@ -86,7 +93,6 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
         preference.edit().putString(KEY_LAST_IMAGE, data.file!!.absolutePath).apply() // save image path
 
-        // TODO better uri maybe
         applicationContext.grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         Artwork.Builder()

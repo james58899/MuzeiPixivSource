@@ -11,9 +11,10 @@
 
     <!--Preference-->
     <string name="pref_title_account">Account</string>
+    <string name="pref_pixiv_summary">Login to access full features</string>
     <string name="pref_pixiv_sign_in">Login Pixiv</string>
     <string name="pref_pixiv_sign_out">Logout</string>
-    <string name="pref_pixiv_summary">Login to access full features</string>
+    <string name="pref_pixiv_sign_out_confirm">Confirm logout?</string>
 
     <string name="pref_title_fetch">Fetch</string>
     <string name="pref_fetch_safe">Safe mode</string>
@@ -48,5 +49,6 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="pref_pixiv_sign_out_confirm">Confirm logout?</string>
+    <string name="pref_fetch_size">Filter size</string>
+    <string name="pref_fetch_size_summary">Exclude small images</string>
 </resources>
