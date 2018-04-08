@@ -11,11 +11,7 @@ import java.util.*
 
 class Fallback {
     companion object {
-        fun getImage() = getList().let { it[Random().nextInt(it.size)] }
-
-        fun getImage(index: Int) = getList()[index]
-
-        private fun getList(): ArrayList<Illust> {
+        fun getImages(): ArrayList<Illust> {
             return request("https://app-api.pixiv.net/v1/walkthrough/illusts")?.illusts
                     ?: throw RemoteMuzeiArtSource.RetryException()
         }

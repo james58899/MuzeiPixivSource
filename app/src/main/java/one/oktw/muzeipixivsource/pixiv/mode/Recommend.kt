@@ -10,21 +10,17 @@ import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import java.util.*
 
 class Recommend(private val token: String) {
-    fun getImage() = getList().let { it[Random().nextInt(it.size)] }
-
-    fun getImage(index: Int) = getList()[index]
-
-    private fun getList(): ArrayList<Illust> {
+    fun getImages(number: Int): ArrayList<Illust> {
         val list = ArrayList<Illust>()
         var url = "https://app-api.pixiv.net/v1/illust/recommended"
 
-        for (i in 0..1) {
+        do {
             val res = request(url) ?: throw RemoteMuzeiArtSource.RetryException()
 
             if (res.nextUrl != null) url = res.nextUrl else break
 
             list += res.illusts
-        }
+        } while (list.size < number)
 
         return list
     }

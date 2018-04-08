@@ -10,6 +10,7 @@ import com.google.android.apps.muzei.api.MuzeiArtSource
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_DEVICE_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_REFRESH_TOKEN
@@ -17,12 +18,14 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.DataImageInfo
 import one.oktw.muzeipixivsource.pixiv.Pixiv
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
+import java.io.File
 
 class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private lateinit var preference: SharedPreferences
 
     companion object {
         private const val MINUTE = 60000
+        private const val KEY_LAST_IMAGE = "last_image"
         private const val MODE_RANKING = 0
         private const val MODE_RECOMMEND = 1
         private const val MODE_FAVORITE = 2
@@ -38,13 +41,16 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     }
 
     override fun onTryUpdate(reason: Int) {
-        scheduleUpdate(System.currentTimeMillis() + preference.getString("muzei_interval", "60").toInt() * MINUTE)
-
         // only update token on auto change
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) updateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
-        val pixiv = Pixiv(token, cacheDir) // TODO other save path
+        val original = preference.getBoolean(KEY_FETCH_ORIGIN, false)
+        val pixiv = Pixiv(
+            token = token,
+            originImage = original,
+            savePath = cacheDir
+        ) // TODO other save path
 
         try {
             when (preference.getString(KEY_FETCH_MODE, "0").toInt()) {
@@ -60,6 +66,9 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             updateToken()
             pixiv.getFallback().let(::publish)
         }
+
+        // schedule next update
+        scheduleUpdate(System.currentTimeMillis() + preference.getString("muzei_interval", "60").toInt() * MINUTE)
     }
 
     private fun updateToken() {
@@ -72,6 +81,9 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private fun publish(data: DataImageInfo) {
         val uri = data.file?.let { getUriForFile(applicationContext, "one.oktw.fileprovider", it) }
                 ?: throw RemoteMuzeiArtSource.RetryException()
+
+        preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
+        preference.edit().putString(KEY_LAST_IMAGE, data.file!!.absolutePath).apply() // save image path
 
         // TODO better uri maybe
         applicationContext.grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)

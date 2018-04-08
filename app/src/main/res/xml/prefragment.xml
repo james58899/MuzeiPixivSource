@@ -12,7 +12,7 @@
                 android:defaultValue="false"
                 android:title="@string/pref_fetch_origin" android:key="fetch_origin"
                 android:summaryOn="@string/pref_fetch_origin_summary_on"
-                android:summaryOff="@string/pref_fetch_origin_summary_off" android:enabled="false"/>
+                android:summaryOff="@string/pref_fetch_origin_summary_off"/>
         <SwitchPreference
                 android:defaultValue="true"
                 android:title="@string/pref_fetch_safe" android:key="fetch_safe"
