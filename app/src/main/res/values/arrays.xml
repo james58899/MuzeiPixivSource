@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_fetch_mode_entities">
-        <item>@string/pref_fetch_mode_top</item>
+        <item>@string/pref_fetch_mode_ranking</item>
         <item>@string/pref_fetch_mode_recommend</item>
-        <item>@string/pref_fetch_mode_favorite</item>
+        <item>@string/pref_fetch_mode_bookmark</item>
     </string-array>
     <string-array name="pref_fetch_mode_value" translatable="false">
         <item>0</item>

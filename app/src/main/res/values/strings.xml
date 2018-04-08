@@ -22,9 +22,9 @@
 
     <string name="pref_fetch_mode">Mode</string>
     <string name="pref_fetch_mode_dialog">Fetch mode</string>
-    <string name="pref_fetch_mode_top">TOP</string>
+    <string name="pref_fetch_mode_ranking">Ranking</string>
     <string name="pref_fetch_mode_recommend">Recommend</string>
-    <string name="pref_fetch_mode_favorite">Favorite</string>
+    <string name="pref_fetch_mode_bookmark">Bookmark</string>
 
     <string name="pref_title_muzei" translatable="false">Muzei</string>
     <string name="pref_muzei_interval">Change interval</string>
