@@ -9,10 +9,17 @@ import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
 import one.oktw.muzeipixivsource.R
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_BOOKMARK
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_FALLBACK
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RANKING
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RECOMMEND
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_FILTER_SIZE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_BOOKMARK
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_SAFE
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_MUZEI_CHANGE_INTERVAL
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_DEVICE_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_REFRESH_TOKEN
@@ -20,20 +27,16 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.DataImageInfo
 import one.oktw.muzeipixivsource.pixiv.Pixiv
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
+import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory
 import java.io.File
+import java.lang.System.currentTimeMillis
 
 class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private lateinit var preference: SharedPreferences
 
     companion object {
         private const val MINUTE = 60000
-
         private const val KEY_LAST_IMAGE = "last_image"
-
-        private const val MODE_FALLBACK = -1
-        private const val MODE_RANKING = 0
-        private const val MODE_RECOMMEND = 1
-        private const val MODE_FAVORITE = 2
     }
 
     override fun onCreate() {
@@ -51,6 +54,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val mode = preference.getString(KEY_FETCH_MODE, "0").toInt()
+
         val pixiv = Pixiv(
             token = token,
             originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false),
@@ -61,10 +65,17 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
         try {
             when (mode) {
-                MODE_FALLBACK -> pixiv.getFallback().let(::publish)
-                MODE_RANKING -> pixiv.getRanking().let(::publish)
-                MODE_RECOMMEND -> pixiv.getRecommend().let(::publish)
-                MODE_FAVORITE -> pixiv.getBookmark(preference.getInt(KEY_PIXIV_USER_ID, -1)).let(::publish)
+                FETCH_MODE_FALLBACK -> pixiv.getFallback().let(::publish)
+                FETCH_MODE_RECOMMEND -> pixiv.getRecommend().let(::publish)
+
+                FETCH_MODE_RANKING -> pixiv.getRanking(
+                    RankingCategory.valueOf(preference.getString(KEY_FETCH_MODE_RANKING, RankingCategory.Monthly.name))
+                ).let(::publish)
+
+                FETCH_MODE_BOOKMARK -> pixiv.getBookmark(
+                    preference.getInt(KEY_PIXIV_USER_ID, -1),
+                    preference.getBoolean(KEY_FETCH_MODE_BOOKMARK, false)
+                ).let(::publish)
             }
         } catch (e: Exception) {
             // TODO better except handle
@@ -76,7 +87,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         }
 
         // schedule next update
-        scheduleUpdate(System.currentTimeMillis() + preference.getString("muzei_interval", "60").toInt() * MINUTE)
+        scheduleUpdate(currentTimeMillis() + preference.getString(KEY_MUZEI_CHANGE_INTERVAL, "60").toInt() * MINUTE)
     }
 
     private fun updateToken() {

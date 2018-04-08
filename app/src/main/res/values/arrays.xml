@@ -11,6 +11,17 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="pref_fetch_ranking_mode">
+        <item>@string/pref_fetch_mode_ranking_daily</item>
+        <item>@string/pref_fetch_mode_ranking_weekly</item>
+        <item>@string/pref_fetch_mode_ranking_monthly</item>
+    </string-array>
+    <string-array name="pref_fetch_ranking_value" translatable="false">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
+
     <string-array name="pref_muzei_interval_entities">
         <item>@string/pref_muzei_interval_30</item>
         <item>@string/pref_muzei_interval_60</item>

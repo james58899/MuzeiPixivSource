@@ -1,9 +1,6 @@
 package one.oktw.muzeipixivsource.pixiv
 
-import one.oktw.muzeipixivsource.pixiv.mode.Bookmark
-import one.oktw.muzeipixivsource.pixiv.mode.Fallback
-import one.oktw.muzeipixivsource.pixiv.mode.Ranking
-import one.oktw.muzeipixivsource.pixiv.mode.Recommend
+import one.oktw.muzeipixivsource.pixiv.mode.*
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import java.io.File
 import java.util.*
@@ -19,10 +16,10 @@ class Pixiv(
 
     fun getFallback() = Fallback.getImages().let(::random).let(::processIllust)
 
-    fun getRanking(): DataImageInfo {
+    fun getRanking(category: RankingCategory): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Ranking(token).getImages(60).let(::processList)
+        return Ranking(token, category).getImages(60).let(::processList)
     }
 
     fun getRecommend(): DataImageInfo {
@@ -52,7 +49,7 @@ class Pixiv(
             illust.metaPages[0].run { if (originImage) imageUrls.original!! else imageUrls.large!! }
         } else {
             illust.run { if (originImage) metaSinglePage.original_image_url else image_urls.large!! }
-        }.let {
+        }.run { replace("/c/600x1200_90", "") }.let {
             // save image then return
             return DataImageInfo(
                 illust.title,

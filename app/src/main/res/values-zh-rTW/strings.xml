@@ -38,4 +38,11 @@
     <string name="pref_pixiv_sign_out_confirm">確定登出嗎？</string>
     <string name="pref_fetch_size">過濾大小</string>
     <string name="pref_fetch_size_summary">排除過小的圖片</string>
+    <string name="pref_fetch_mode_ranking_daily">每日</string>
+    <string name="pref_fetch_mode_ranking_weekly">每週</string>
+    <string name="pref_fetch_mode_ranking_monthly">每月</string>
+    <string name="pref_fetch_ranking">排行榜類別</string>
+    <string name="pref_fetch_bookmark">私人收藏</string>
+    <string name="pref_fetch_bookmark_summary_on">包含私人收藏</string>
+    <string name="pref_fetch_bookmark_summary_off">不包含私人收藏</string>
 </resources>

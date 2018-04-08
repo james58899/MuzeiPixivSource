@@ -6,7 +6,7 @@
                     android:summary="@string/pref_pixiv_summary"/>
     </PreferenceCategory>
     <PreferenceCategory
-            android:title="@string/pref_title_fetch">
+            android:title="@string/pref_title_fetch" android:key="fetch">
 
         <SwitchPreference
                 android:defaultValue="false"
@@ -27,6 +27,16 @@
                 android:title="@string/pref_fetch_mode" android:entries="@array/pref_fetch_mode_entities"
                 android:entryValues="@array/pref_fetch_mode_value" android:key="fetch_mode"
                 android:dialogTitle="@string/pref_fetch_mode_dialog" android:summary="%s"/>
+        <ListPreference
+                android:defaultValue="1"
+                android:title="@string/pref_fetch_ranking" android:entries="@array/pref_fetch_ranking_mode"
+                android:entryValues="@array/pref_fetch_ranking_value" android:key="fetch_mode_ranking"
+                android:summary="%s"/>
+        <SwitchPreference
+                android:defaultValue="false"
+                android:title="@string/pref_fetch_bookmark" android:key="fetch_mode_bookmark"
+                android:summaryOn="@string/pref_fetch_bookmark_summary_on"
+                android:summaryOff="@string/pref_fetch_bookmark_summary_off"/>
     </PreferenceCategory>
     <PreferenceCategory
             android:title="@string/pref_title_muzei">
