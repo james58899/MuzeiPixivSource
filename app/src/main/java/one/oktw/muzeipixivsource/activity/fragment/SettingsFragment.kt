@@ -73,7 +73,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setMessage(R.string.pref_pixiv_sign_out_confirm)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         logout()
-                        updateAccountInfo()
                     }
                     .setNegativeButton(android.R.string.no, null)
                     .show()
@@ -152,5 +151,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             .remove(KEY_PIXIV_USER_USERNAME)
             .remove(KEY_PIXIV_USER_NAME)
             .apply()
+
+        updateAccountInfo()
+        updateFetchModePreference()
     }
 }
