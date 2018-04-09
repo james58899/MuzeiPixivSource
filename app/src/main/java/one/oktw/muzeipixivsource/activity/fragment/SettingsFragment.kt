@@ -95,6 +95,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun onLogin(result: Int, data: Intent?) {
+        if (result != RESULT_OK || data == null) return
+
+        data.getParcelableExtra<OAuthResponse>("response").let {
+            PixivOAuth.save(preferenceManager.sharedPreferences, it)
+        }
+
+        updateAccountInfo()
+        updateFetchModePreference()
+    }
+
     private fun updateAccountInfo() {
         val account = findPreference(KEY_ACCOUNT)
         val pref = account.sharedPreferences
@@ -130,16 +141,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             FETCH_MODE_RANKING -> fetchCategory.addPreference(rankingPreference)
             FETCH_MODE_BOOKMARK -> fetchCategory.addPreference(bookmarkPreference)
         }
-    }
-
-    private fun onLogin(result: Int, data: Intent?) {
-        if (result != RESULT_OK || data == null) return
-
-        data.getParcelableExtra<OAuthResponse>("response").let {
-            PixivOAuth.save(preferenceManager.sharedPreferences, it)
-        }
-
-        updateAccountInfo()
     }
 
     private fun logout() {
