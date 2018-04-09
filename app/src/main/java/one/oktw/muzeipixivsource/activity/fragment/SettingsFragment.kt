@@ -125,7 +125,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         asList(rankingPreference, bookmarkPreference).forEach { fetchCategory.removePreference(it) }
 
-        when (mode) {
+        // hide if not login
+        if (fetchMode.isEnabled) when (mode) {
             FETCH_MODE_RANKING -> fetchCategory.addPreference(rankingPreference)
             FETCH_MODE_BOOKMARK -> fetchCategory.addPreference(bookmarkPreference)
         }
