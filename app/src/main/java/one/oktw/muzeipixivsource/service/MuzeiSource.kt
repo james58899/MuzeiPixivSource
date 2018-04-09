@@ -60,7 +60,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false),
             safety = preference.getBoolean(KEY_FETCH_SAFE, true),
             size = preference.getBoolean(KEY_FETCH_FILTER_SIZE, true),
-            savePath = cacheDir // TODO other save path
+            savePath = cacheDir
         )
 
         try {
