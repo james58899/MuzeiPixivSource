@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.support.v4.content.FileProvider.getUriForFile
 import android.support.v7.preference.PreferenceManager
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
@@ -79,7 +80,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             }
         } catch (e: Exception) {
             // TODO better except handle
-            Log.e("pixiv", e.message, e)
+            Crashlytics.logException(e)
 
             // try update token then get fallback
             tryUpdateToken()

@@ -89,7 +89,7 @@ class PixivSignIn : AppCompatActivity() {
                 login_button.isEnabled = true
 
                 // TODO show error message
-                Snackbar.make(login_layout, R.string.login_fail, Snackbar.LENGTH_INDEFINITE).show()
+                Snackbar.make(login_layout, R.string.login_fail, Snackbar.LENGTH_LONG).show()
             }
         }
     }

@@ -1,6 +1,7 @@
 package one.oktw.muzeipixivsource.pixiv
 
 import android.content.SharedPreferences
+import com.crashlytics.android.Crashlytics
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import okhttp3.FormBody
@@ -55,20 +56,20 @@ class PixivOAuth {
             val httpClient = OkHttpClient()
             val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
 
-            return Request.Builder()
-                .post(data)
-                .url(API)
-                .build()
-                .let(httpClient::newCall)
-                .execute()
-                .use {
-                    if (it.body() == null) {
-                        // TODO error message
-                        OAuth(has_error = true)
-                    } else {
+            return try {
+                Request.Builder()
+                    .post(data)
+                    .url(API)
+                    .build()
+                    .let(httpClient::newCall)
+                    .execute()
+                    .use {
                         gson.fromJson(it.body()!!.charStream(), OAuth::class.java)
                     }
-                }
+            } catch (e: Exception) {
+                Crashlytics.logException(e)
+                OAuth(has_error = true)
+            }
         }
     }
 }
