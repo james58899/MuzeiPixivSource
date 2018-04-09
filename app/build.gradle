@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
@@ -40,10 +41,17 @@ dependencies {
     implementation 'com.google.android.apps.muzei:muzei-api:2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.firebase:firebase-core:12.0.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.1'
 }
+
+apply plugin: 'com.google.gms.google-services'
 
 android.applicationVariants.all { variant ->
     variant.outputs.all {
         outputFileName = "${variant.name}-${variant.versionName}.apk"
+
+        // Disable Google service if file not found
+        project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = file("google-services.json").exists()
     }
 }
