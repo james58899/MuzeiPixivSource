@@ -50,7 +50,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
     override fun onTryUpdate(reason: Int) {
         // only update token on auto change
-        if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) updateToken()
+        if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) tryUpdateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val mode = if (token == null) -1 else preference.getString(KEY_FETCH_MODE, "0").toInt()
@@ -82,7 +82,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             Log.e("pixiv", e.message, e)
 
             // try update token then get fallback
-            updateToken()
+            tryUpdateToken()
             pixiv.getFallback().let(::publish)
         }
 
@@ -90,11 +90,15 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         scheduleUpdate(currentTimeMillis() + preference.getString(KEY_MUZEI_CHANGE_INTERVAL, "60").toInt() * MINUTE)
     }
 
-    private fun updateToken() {
-        PixivOAuth.refresh(
-            preference.getString(KEY_PIXIV_DEVICE_TOKEN, null) ?: return,
-            preference.getString(KEY_PIXIV_REFRESH_TOKEN, null) ?: return
-        ).response?.let { PixivOAuth.save(preference, it) }
+    private fun tryUpdateToken() {
+        try {
+            PixivOAuth.refresh(
+                preference.getString(KEY_PIXIV_DEVICE_TOKEN, null) ?: return,
+                preference.getString(KEY_PIXIV_REFRESH_TOKEN, null) ?: return
+            ).response?.let { PixivOAuth.save(preference, it) }
+        } catch (e: Exception) {
+            Log.e("pixiv", e.message, e)
+        }
     }
 
     private fun publish(data: DataImageInfo) {
