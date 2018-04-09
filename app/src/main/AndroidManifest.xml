@@ -24,9 +24,7 @@
 
         <service
                 android:name=".service.MuzeiSource"
-                android:icon="@drawable/ic_launcher_foreground"
-                android:label="@string/source_title"
-                android:roundIcon="@mipmap/ic_launcher_round">
+                android:label="@string/source_title">
             <intent-filter>
                 <action android:name="com.google.android.apps.muzei.api.MuzeiArtSource"/>
             </intent-filter>
@@ -46,5 +44,4 @@
                     android:resource="@xml/file_paths"/>
         </provider>
     </application>
-
 </manifest>
