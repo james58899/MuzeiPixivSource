@@ -53,7 +53,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) updateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
-        val mode = preference.getString(KEY_FETCH_MODE, "0").toInt()
+        val mode = if (token == null) -1 else preference.getString(KEY_FETCH_MODE, "0").toInt()
 
         val pixiv = Pixiv(
             token = token,
