@@ -8,17 +8,17 @@
     <PreferenceCategory
             android:title="@string/pref_title_fetch" android:key="fetch">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:title="@string/pref_fetch_origin" android:key="fetch_origin"
                 android:summaryOn="@string/pref_fetch_origin_summary_on"
                 android:summaryOff="@string/pref_fetch_origin_summary_off"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:title="@string/pref_fetch_safe" android:key="fetch_safe"
                 android:summaryOn="@string/pref_fetch_safe_summary_on"
                 android:summaryOff="@string/pref_fetch_safe_summary_off"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:title="@string/pref_fetch_size" android:key="fetch_size"
                 android:summary="@string/pref_fetch_size_summary"/>
@@ -32,7 +32,7 @@
                 android:title="@string/pref_fetch_ranking" android:entries="@array/pref_fetch_ranking_mode"
                 android:entryValues="@array/pref_fetch_ranking_value" android:key="fetch_mode_ranking"
                 android:summary="%s"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:title="@string/pref_fetch_bookmark" android:key="fetch_mode_bookmark"
                 android:summaryOn="@string/pref_fetch_bookmark_summary_on"

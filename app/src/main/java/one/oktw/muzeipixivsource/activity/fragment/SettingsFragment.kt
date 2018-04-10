@@ -3,13 +3,8 @@ package one.oktw.muzeipixivsource.activity.fragment
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
 import android.support.v7.app.AlertDialog
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.Preference.OnPreferenceClickListener
-import android.support.v7.preference.PreferenceCategory
-import android.support.v7.preference.PreferenceFragmentCompat
+import android.support.v7.preference.*
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
@@ -20,7 +15,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var fetchCategory: PreferenceCategory
     private lateinit var fetchMode: ListPreference
     private lateinit var rankingPreference: ListPreference
-    private lateinit var bookmarkPreference: SwitchPreference
+    private lateinit var bookmarkPreference: SwitchPreferenceCompat
 
     companion object {
         private const val PIXIV_LOGIN = 0
@@ -67,7 +62,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun initAccountButton(preference: Preference) {
         updateAccountInfo()
 
-        preference.onPreferenceClickListener = OnPreferenceClickListener {
+        preference.setOnPreferenceClickListener {
             if (it.sharedPreferences.contains(KEY_PIXIV_ACCESS_TOKEN)) {
                 AlertDialog.Builder(requireContext())
                     .setMessage(R.string.pref_pixiv_sign_out_confirm)
@@ -129,7 +124,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (!this::rankingPreference.isInitialized)
             rankingPreference = findPreference(KEY_FETCH_MODE_RANKING) as ListPreference
         if (!this::bookmarkPreference.isInitialized)
-            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreference
+            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreferenceCompat
 
         val mode = (newValue ?: fetchMode.value).toInt()
 
