@@ -1,10 +1,13 @@
 package one.oktw.muzeipixivsource.service
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.support.v4.content.FileProvider.getUriForFile
+import android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED
+import android.support.v4.net.ConnectivityManagerCompat.getRestrictBackgroundStatus
 import android.support.v7.preference.PreferenceManager
-import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
@@ -50,6 +53,13 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     }
 
     override fun onTryUpdate(reason: Int) {
+        // Check has background connect restrict
+        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).let {
+            if (getRestrictBackgroundStatus(it) == RESTRICT_BACKGROUND_STATUS_ENABLED) {
+                throw RetryException()
+            }
+        }
+
         // only update token on auto change
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) tryUpdateToken()
 
@@ -84,7 +94,14 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
             // try update token then get fallback
             tryUpdateToken()
-            pixiv.getFallback().let(::publish)
+
+            try {
+                pixiv.getFallback().let(::publish)
+            } catch (e: Exception) {
+                Crashlytics.logException(e)
+
+                throw RetryException()
+            }
         }
 
         // schedule next update
@@ -98,18 +115,17 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
                 preference.getString(KEY_PIXIV_REFRESH_TOKEN, null) ?: return
             ).response?.let { PixivOAuth.save(preference, it) }
         } catch (e: Exception) {
-            Log.e("pixiv", e.message, e)
+            Crashlytics.logException(e)
         }
     }
 
     private fun publish(data: DataImageInfo) {
-        val uri = data.file?.let { getUriForFile(applicationContext, "one.oktw.fileprovider", it) }
-                ?: throw RemoteMuzeiArtSource.RetryException()
+        val uri = data.file?.let { getUriForFile(this, "one.oktw.fileprovider", it) } ?: throw RetryException()
 
         preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
         preference.edit().putString(KEY_LAST_IMAGE, data.file!!.absolutePath).apply() // save image path
 
-        applicationContext.grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         Artwork.Builder()
             .title(data.title).byline(data.author)
