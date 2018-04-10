@@ -1,12 +1,11 @@
 package one.oktw.muzeipixivsource.service
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.os.Build
 import android.support.v4.content.FileProvider.getUriForFile
 import android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED
-import android.support.v4.net.ConnectivityManagerCompat.getRestrictBackgroundStatus
 import android.support.v7.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
@@ -54,9 +53,9 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
     override fun onTryUpdate(reason: Int) {
         // Check has background connect restrict
-        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).let {
-            if (getRestrictBackgroundStatus(it) == RESTRICT_BACKGROUND_STATUS_ENABLED) {
-                throw RetryException()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
+                if (restrictBackgroundStatus == RESTRICT_BACKGROUND_STATUS_ENABLED) throw RetryException()
             }
         }
 
