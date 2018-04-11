@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
+import android.os.Bundle
 import android.support.v4.content.FileProvider.getUriForFile
 import android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED
 import android.support.v7.preference.PreferenceManager
@@ -11,6 +12,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
+import com.google.firebase.analytics.FirebaseAnalytics
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_BOOKMARK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_FALLBACK
@@ -36,6 +38,7 @@ import java.lang.System.currentTimeMillis
 
 class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private lateinit var preference: SharedPreferences
+    private lateinit var analytics: FirebaseAnalytics
 
     companion object {
         private const val MINUTE = 60000
@@ -48,10 +51,14 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         PreferenceManager.setDefaultValues(this, R.xml.prefragment, false)
         preference = PreferenceManager.getDefaultSharedPreferences(this)
 
+        analytics = FirebaseAnalytics.getInstance(this)
+
         setUserCommands(BUILTIN_COMMAND_ID_NEXT_ARTWORK)
     }
 
     override fun onTryUpdate(reason: Int) {
+        val trace = Bundle()
+
         // Check has background connect restrict
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
@@ -63,15 +70,20 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         if (reason != MuzeiArtSource.UPDATE_REASON_USER_NEXT) tryUpdateToken()
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
+        val originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false)
+        val safety = preference.getBoolean(KEY_FETCH_SAFE, true)
+        val size = preference.getBoolean(KEY_FETCH_FILTER_SIZE, true)
         val mode = if (token == null) -1 else preference.getString(KEY_FETCH_MODE, "0").toInt()
 
-        val pixiv = Pixiv(
-            token = token,
-            originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false),
-            safety = preference.getBoolean(KEY_FETCH_SAFE, true),
-            size = preference.getBoolean(KEY_FETCH_FILTER_SIZE, true),
-            savePath = cacheDir
-        )
+        val pixiv = Pixiv(token, originImage, safety, size, cacheDir)
+
+        trace.apply {
+            putBoolean("origin_image", originImage)
+            putBoolean("safety", safety)
+            putBoolean("size", size)
+            putInt("mode", mode)
+            putBoolean("success", true)
+        }
 
         try {
             when (mode) {
@@ -91,13 +103,18 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             // TODO better except handle
             Crashlytics.logException(e)
 
+            trace.putBoolean("success", false)
+
             // try update token then get fallback
             tryUpdateToken()
 
             try {
                 pixiv.getFallback().let(::publish)
+                trace.putBoolean("fallback", true)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
+
+                trace.putBoolean("fallback", false)
 
                 throw RetryException()
             }
@@ -105,9 +122,14 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
 
         // schedule next update
         scheduleUpdate(currentTimeMillis() + preference.getString(KEY_MUZEI_CHANGE_INTERVAL, "60").toInt() * MINUTE)
+
+        // log event
+        analytics.logEvent("fetch_image", trace)
     }
 
     private fun tryUpdateToken() {
+        analytics.logEvent("update_token", null)
+
         try {
             PixivOAuth.refresh(
                 preference.getString(KEY_PIXIV_DEVICE_TOKEN, null) ?: return,
