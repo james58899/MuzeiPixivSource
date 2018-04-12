@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.content.FileProvider.getUriForFile
 import android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED
 import android.support.v7.preference.PreferenceManager
+import androidx.core.content.edit
 import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
@@ -144,7 +145,7 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         val uri = data.file?.let { getUriForFile(this, "one.oktw.fileprovider", it) } ?: throw RetryException()
 
         preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
-        preference.edit().putString(KEY_LAST_IMAGE, data.file!!.absolutePath).apply() // save image path
+        preference.edit { putString(KEY_LAST_IMAGE, data.file!!.absolutePath) } // save image path
 
         grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 

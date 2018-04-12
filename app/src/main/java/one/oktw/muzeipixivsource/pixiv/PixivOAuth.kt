@@ -1,6 +1,7 @@
 package one.oktw.muzeipixivsource.pixiv
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.crashlytics.android.Crashlytics
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -25,31 +26,36 @@ class PixivOAuth {
 
         fun login(username: String, password: String): OAuth {
             return FormBody.Builder()
-                .add("client_id", CLIENT_ID).add("client_secret", CLIENT_SECRET).add("get_secure_url", "true")
-                .add("grant_type", "password").add("device_token", "pixiv")
-                .add("username", username).add("password", password)
+                .add("client_id", CLIENT_ID)
+                .add("client_secret", CLIENT_SECRET)
+                .add("get_secure_url", "true")
+                .add("grant_type", "password")
+                .add("device_token", "pixiv")
+                .add("username", username)
+                .add("password", password)
                 .build()
                 .let(::sendRequest)
         }
 
         fun refresh(deviceToken: String, refreshToken: String): OAuth {
             return FormBody.Builder()
-                .add("client_id", CLIENT_ID).add("client_secret", CLIENT_SECRET)
-                .add("get_secure_url", "true").add("grant_type", "refresh_token")
-                .add("device_token", deviceToken).add("refresh_token", refreshToken)
+                .add("client_id", CLIENT_ID)
+                .add("client_secret", CLIENT_SECRET)
+                .add("get_secure_url", "true")
+                .add("grant_type", "refresh_token")
+                .add("device_token", deviceToken)
+                .add("refresh_token", refreshToken)
                 .build()
                 .let(::sendRequest)
         }
 
-        fun save(preference: SharedPreferences, data: OAuthResponse) {
-            preference.edit()
-                .putString(KEY_PIXIV_ACCESS_TOKEN, data.accessToken)
-                .putString(KEY_PIXIV_REFRESH_TOKEN, data.refreshToken)
-                .putString(KEY_PIXIV_DEVICE_TOKEN, data.deviceToken)
-                .putInt(KEY_PIXIV_USER_ID, data.user.id)
-                .putString(KEY_PIXIV_USER_USERNAME, data.user.account)
-                .putString(KEY_PIXIV_USER_NAME, data.user.name)
-                .apply()
+        fun save(preference: SharedPreferences, data: OAuthResponse) = preference.edit {
+            putString(KEY_PIXIV_ACCESS_TOKEN, data.accessToken)
+            putString(KEY_PIXIV_REFRESH_TOKEN, data.refreshToken)
+            putString(KEY_PIXIV_DEVICE_TOKEN, data.deviceToken)
+            putInt(KEY_PIXIV_USER_ID, data.user.id)
+            putString(KEY_PIXIV_USER_USERNAME, data.user.account)
+            putString(KEY_PIXIV_USER_NAME, data.user.name)
         }
 
         private fun sendRequest(data: RequestBody): OAuth {

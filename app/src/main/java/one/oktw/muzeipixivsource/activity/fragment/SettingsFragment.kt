@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.preference.*
+import androidx.core.content.edit
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
@@ -138,14 +139,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun logout() {
-        preferenceManager.sharedPreferences.edit()
-            .remove(KEY_PIXIV_ACCESS_TOKEN)
-            .remove(KEY_PIXIV_REFRESH_TOKEN)
-            .remove(KEY_PIXIV_DEVICE_TOKEN)
-            .remove(KEY_PIXIV_USER_ID)
-            .remove(KEY_PIXIV_USER_USERNAME)
-            .remove(KEY_PIXIV_USER_NAME)
-            .apply()
+        preferenceManager.sharedPreferences.edit {
+            remove(KEY_PIXIV_ACCESS_TOKEN)
+            remove(KEY_PIXIV_REFRESH_TOKEN)
+            remove(KEY_PIXIV_DEVICE_TOKEN)
+            remove(KEY_PIXIV_USER_ID)
+            remove(KEY_PIXIV_USER_USERNAME)
+            remove(KEY_PIXIV_USER_NAME)
+        }
 
         updateAccountInfo()
         updateFetchModePreference()
