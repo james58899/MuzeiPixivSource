@@ -4,6 +4,7 @@
 
     <!--Activity-->
     <string name="title_activity_settings">Settings</string>
+    <string name="muzei_not_install">Muzei not installed, install from Play Store?</string>
 
     <!--Toast-->
     <string name="login_success">Login successful!</string>
@@ -11,10 +12,24 @@
 
     <!--Preference-->
     <string name="pref_title_account">Account</string>
+
     <string name="pref_pixiv_summary">Login to access full features</string>
     <string name="pref_pixiv_sign_in">Login Pixiv</string>
     <string name="pref_pixiv_sign_out">Logout</string>
     <string name="pref_pixiv_sign_out_confirm">Confirm logout?</string>
+
+    <string name="pref_title_muzei" translatable="false">Muzei</string>
+
+    <string name="pref_muzei">Open Muzei</string>
+    <string name="pref_muzei_summary">Open muzei to change settings</string>
+    <string name="pref_muzei_interval">Change interval</string>
+    <string name="pref_muzei_interval_30">30 minute</string>
+    <string name="pref_muzei_interval_60">1 hour</string>
+    <string name="pref_muzei_interval_120">2 hour</string>
+    <string name="pref_muzei_interval_180">3 hour</string>
+    <string name="pref_muzei_interval_360">6 hour</string>
+    <string name="pref_muzei_interval_720">12 hour</string>
+    <string name="pref_muzei_interval_1440">1 day</string>
 
     <string name="pref_title_fetch">Fetch</string>
 
@@ -43,16 +58,6 @@
     <string name="pref_fetch_bookmark">Private bookmark</string>
     <string name="pref_fetch_bookmark_summary_on">Include private bookmark</string>
     <string name="pref_fetch_bookmark_summary_off">Does not include private bookmark</string>
-
-    <string name="pref_title_muzei" translatable="false">Muzei</string>
-    <string name="pref_muzei_interval">Change interval</string>
-    <string name="pref_muzei_interval_30">30 minute</string>
-    <string name="pref_muzei_interval_60">1 hour</string>
-    <string name="pref_muzei_interval_120">2 hour</string>
-    <string name="pref_muzei_interval_180">3 hour</string>
-    <string name="pref_muzei_interval_360">6 hour</string>
-    <string name="pref_muzei_interval_720">12 hour</string>
-    <string name="pref_muzei_interval_1440">1 day</string>
 
     <!-- Login -->
     <string name="title_activity_pixiv_login">Login Pixiv</string>

@@ -45,4 +45,7 @@
     <string name="pref_fetch_bookmark">私人收藏</string>
     <string name="pref_fetch_bookmark_summary_on">包含私人收藏</string>
     <string name="pref_fetch_bookmark_summary_off">不包含私人收藏</string>
+    <string name="pref_muzei">開啟 Muzei</string>
+    <string name="pref_muzei_summary">開啟 Muzei 調整設定</string>
+    <string name="muzei_not_install">Muzei 未安裝，從Play商店安裝？</string>
 </resources>

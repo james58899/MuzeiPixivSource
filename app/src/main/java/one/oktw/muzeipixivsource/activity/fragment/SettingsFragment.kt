@@ -10,6 +10,7 @@ import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
 import java.util.Arrays.asList
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -29,6 +30,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         // Preference keys
         const val KEY_ACCOUNT = "account"
+        const val KEY_MUZEI = "muzei"
+        const val KEY_MUZEI_CHANGE_INTERVAL = "muzei_interval"
         const val KEY_FETCH = "fetch"
         const val KEY_FETCH_ORIGIN = "fetch_origin"
         const val KEY_FETCH_SAFE = "fetch_safe"
@@ -36,7 +39,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH_MODE_RANKING = "fetch_mode_ranking"
         const val KEY_FETCH_MODE_BOOKMARK = "fetch_mode_bookmark"
         const val KEY_FETCH_FILTER_SIZE = "fetch_size"
-        const val KEY_MUZEI_CHANGE_INTERVAL = "muzei_interval"
         const val KEY_PIXIV_ACCESS_TOKEN = "pixiv_access_token"
         const val KEY_PIXIV_REFRESH_TOKEN = "pixiv_refresh_token"
         const val KEY_PIXIV_DEVICE_TOKEN = "pixiv_device_token"
@@ -49,6 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.prefragment, rootKey)
 
         initAccountButton(findPreference(KEY_ACCOUNT))
+        initMuzeiButton(findPreference(KEY_MUZEI))
         initFetchMode(findPreference(KEY_FETCH_MODE))
     }
 
@@ -75,6 +78,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else {
                 startActivityForResult(Intent(context, PixivSignIn::class.java), PIXIV_LOGIN)
             }
+
+            true
+        }
+    }
+
+    private fun initMuzeiButton(preference: Preference) {
+        preference.setOnPreferenceClickListener {
+            startActivity(launchOrMarket(requireContext(), "net.nurik.roman.muzei"))
 
             true
         }
