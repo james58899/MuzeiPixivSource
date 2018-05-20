@@ -154,9 +154,6 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private fun publish(data: DataImageInfo) {
         val uri = data.file?.let { getUriForFile(this, "one.oktw.fileprovider", it) } ?: throw RetryException()
 
-        preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
-        preference.edit { putString(KEY_LAST_IMAGE, data.file!!.absolutePath) } // save image path
-
         grantUriPermission("net.nurik.roman.muzei", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         Artwork.Builder()
@@ -165,5 +162,8 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
             .viewIntent(Intent(Intent.ACTION_VIEW, data.url))
             .build()
             .let(::publishArtwork)
+
+        preference.getString(KEY_LAST_IMAGE, null)?.let { File(it).delete() } // delete old image
+        preference.edit { putString(KEY_LAST_IMAGE, data.file!!.absolutePath) } // save image path
     }
 }
