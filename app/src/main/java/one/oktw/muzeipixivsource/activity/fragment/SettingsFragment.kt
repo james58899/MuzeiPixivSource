@@ -1,10 +1,10 @@
 package one.oktw.muzeipixivsource.activity.fragment
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.preference.*
+import android.preference.*
 import androidx.core.content.edit
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
@@ -13,11 +13,11 @@ import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
 import java.util.Arrays.asList
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragment() {
     private lateinit var fetchCategory: PreferenceCategory
     private lateinit var fetchMode: ListPreference
     private lateinit var rankingPreference: ListPreference
-    private lateinit var bookmarkPreference: SwitchPreferenceCompat
+    private lateinit var bookmarkPreference: SwitchPreference
 
     companion object {
         private const val PIXIV_LOGIN = 0
@@ -35,6 +35,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH = "fetch"
         const val KEY_FETCH_ORIGIN = "fetch_origin"
         const val KEY_FETCH_SAFE = "fetch_safe"
+        const val KEY_FETCH_NUMBER = "fetch_number"
         const val KEY_FETCH_MODE = "fetch_mode"
         const val KEY_FETCH_MODE_RANKING = "fetch_mode_ranking"
         const val KEY_FETCH_MODE_BOOKMARK = "fetch_mode_bookmark"
@@ -47,8 +48,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_PIXIV_USER_USERNAME = "pixiv_user_username"
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.prefragment, rootKey)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        addPreferencesFromResource(R.xml.prefragment)
 
         initAccountButton(findPreference(KEY_ACCOUNT))
         initMuzeiButton(findPreference(KEY_MUZEI))
@@ -68,7 +71,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         preference.setOnPreferenceClickListener {
             if (it.sharedPreferences.contains(KEY_PIXIV_ACCESS_TOKEN)) {
-                AlertDialog.Builder(requireContext())
+                AlertDialog.Builder(activity)
                     .setMessage(R.string.pref_pixiv_sign_out_confirm)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         logout()
@@ -76,7 +79,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setNegativeButton(android.R.string.no, null)
                     .show()
             } else {
-                startActivityForResult(Intent(context, PixivSignIn::class.java), PIXIV_LOGIN)
+                startActivityForResult(Intent(activity, PixivSignIn::class.java), PIXIV_LOGIN)
             }
 
             true
@@ -85,7 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun initMuzeiButton(preference: Preference) {
         preference.setOnPreferenceClickListener {
-            startActivity(launchOrMarket(requireContext(), "net.nurik.roman.muzei"))
+            startActivity(launchOrMarket(activity, "net.nurik.roman.muzei"))
 
             true
         }
@@ -136,7 +139,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (!this::rankingPreference.isInitialized)
             rankingPreference = findPreference(KEY_FETCH_MODE_RANKING) as ListPreference
         if (!this::bookmarkPreference.isInitialized)
-            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreferenceCompat
+            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreference
 
         val mode = (newValue ?: fetchMode.value).toInt()
 

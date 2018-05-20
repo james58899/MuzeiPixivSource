@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.content.FileProvider.getUriForFile
 import android.support.v4.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED
-import android.support.v7.preference.PreferenceManager
 import androidx.core.content.edit
 import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
@@ -23,6 +23,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_BOOKMARK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_NUMBER
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_SAFE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_MUZEI_CHANGE_INTERVAL
@@ -74,15 +75,24 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         val originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val safety = preference.getBoolean(KEY_FETCH_SAFE, true)
         val size = preference.getBoolean(KEY_FETCH_FILTER_SIZE, true)
+        val number = preference.getInt(KEY_FETCH_NUMBER, 30)
         val mode = if (token == null) -1 else preference.getString(KEY_FETCH_MODE, "0").toInt()
 
-        val pixiv = Pixiv(token, originImage, safety, size, cacheDir)
+        val pixiv = Pixiv(
+                token = token,
+                originImage = originImage,
+                safety = safety,
+                size = size,
+                number = number,
+                savePath = cacheDir
+        )
 
         trace.apply {
             putBoolean("origin_image", originImage)
             putBoolean("safety", safety)
             putBoolean("size", size)
             putInt("mode", mode)
+            putInt("number", number)
             putBoolean("success", true)
         }
 

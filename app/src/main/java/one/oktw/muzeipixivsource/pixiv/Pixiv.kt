@@ -6,11 +6,12 @@ import java.io.File
 import java.util.*
 
 class Pixiv(
-    private val token: String?,
-    private val originImage: Boolean = false,
-    private val safety: Boolean = true,
-    private val size: Boolean = true,
-    savePath: File
+        private val token: String?,
+        private val originImage: Boolean = false,
+        private val safety: Boolean = true,
+        private val size: Boolean = true,
+        private val number: Int = 30,
+        savePath: File
 ) {
     private val savePath = File(savePath, "pixiv").apply { mkdir() }
 
@@ -19,19 +20,19 @@ class Pixiv(
     fun getRanking(category: RankingCategory): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Ranking(token, category).getImages(60).let(::processList)
+        return Ranking(token, category).getImages(number).let(::processList)
     }
 
     fun getRecommend(): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Recommend(token).getImages(30).let(::processList)
+        return Recommend(token).getImages(number).let(::processList)
     }
 
     fun getBookmark(user: Int, private: Boolean = false): DataImageInfo {
         if (token == null) return getFallback()
 
-        return Bookmark(token, user, private).getImages(90).let(::processList)
+        return Bookmark(token, user, private).getImages(number).let(::processList)
     }
 
     private fun processList(list: List<Illust>): DataImageInfo {

@@ -48,4 +48,6 @@
     <string name="pref_muzei">開啟 Muzei</string>
     <string name="pref_muzei_summary">開啟 Muzei 調整設定</string>
     <string name="muzei_not_install">Muzei 未安裝，從Play商店安裝？</string>
+    <string name="pref_fetch_number">抓取數量</string>
+    <string name="pref_fetch_number_summary">每次更新時抓取的圖片資料數量</string>
 </resources>

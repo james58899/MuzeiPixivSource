@@ -1,9 +1,9 @@
 package one.oktw.muzeipixivsource.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // Only create new fragment on first create activity
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
+            fragmentManager.beginTransaction()
                 .replace(android.R.id.content, SettingsFragment())
                 .commit()
         }

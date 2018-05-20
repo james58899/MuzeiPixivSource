@@ -21,23 +21,28 @@
     </PreferenceCategory>
     <PreferenceCategory android:key="fetch" android:title="@string/pref_title_fetch">
 
-        <SwitchPreferenceCompat
+        <SwitchPreference
                 android:key="fetch_origin"
                 android:defaultValue="false"
                 android:title="@string/pref_fetch_origin"
                 android:summaryOn="@string/pref_fetch_origin_summary_on"
                 android:summaryOff="@string/pref_fetch_origin_summary_off"/>
-        <SwitchPreferenceCompat
+        <SwitchPreference
                 android:key="fetch_safe"
                 android:defaultValue="true"
                 android:title="@string/pref_fetch_safe"
                 android:summaryOn="@string/pref_fetch_safe_summary_on"
                 android:summaryOff="@string/pref_fetch_safe_summary_off"/>
-        <SwitchPreferenceCompat
+        <SwitchPreference
                 android:key="fetch_size"
                 android:defaultValue="true"
                 android:title="@string/pref_fetch_size"
                 android:summary="@string/pref_fetch_size_summary"/>
+        <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:defaultValue="30"
+            android:key="fetch_number"
+            android:summary="@string/pref_fetch_number_summary"
+            android:title="@string/pref_fetch_number" />
         <ListPreference
                 android:key="fetch_mode"
                 android:defaultValue="0"
@@ -53,7 +58,7 @@
                 android:entries="@array/pref_fetch_ranking_mode"
                 android:entryValues="@array/pref_fetch_ranking_value"
                 android:summary="%s"/>
-        <SwitchPreferenceCompat
+        <SwitchPreference
                 android:key="fetch_mode_bookmark"
                 android:defaultValue="false"
                 android:title="@string/pref_fetch_bookmark"
