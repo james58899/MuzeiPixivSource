@@ -33,8 +33,6 @@ kotlin {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:$support_version"
-    implementation "com.android.support:preference-v14:$support_version"
     implementation "com.android.support:design:$support_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5'
@@ -42,8 +40,8 @@ dependencies {
     implementation 'com.google.android.apps.muzei:muzei-api:2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation "com.google.firebase:firebase-core:$firebase_version"
-    implementation "com.google.firebase:firebase-messaging:$firebase_version"
+    implementation "com.google.firebase:firebase-core:15.0.2"
+    implementation "com.google.firebase:firebase-messaging:15.0.2"
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
 }
 
