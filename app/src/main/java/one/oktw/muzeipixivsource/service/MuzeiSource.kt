@@ -43,7 +43,6 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     private lateinit var analytics: FirebaseAnalytics
 
     companion object {
-        private const val MINUTE = 60000
         private const val KEY_LAST_IMAGE = "last_image"
     }
 
@@ -132,7 +131,13 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
         }
 
         // schedule next update
-        scheduleUpdate(currentTimeMillis() + preference.getString(KEY_MUZEI_CHANGE_INTERVAL, "60").toInt() * MINUTE)
+        preference.getString(KEY_MUZEI_CHANGE_INTERVAL, "60").let {
+            trace.putString("interval", it)
+
+            if (it == "never") return
+
+            scheduleUpdate(currentTimeMillis() + it.toInt() * 60000)
+        }
 
         // log event
         analytics.logEvent("fetch_image", trace)

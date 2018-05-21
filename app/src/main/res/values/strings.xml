@@ -30,6 +30,7 @@
     <string name="pref_muzei_interval_360">6 hour</string>
     <string name="pref_muzei_interval_720">12 hour</string>
     <string name="pref_muzei_interval_1440">1 day</string>
+    <string name="pref_muzei_interval_never">Never</string>
 
     <string name="pref_title_fetch">Fetch</string>
 
@@ -43,6 +44,9 @@
     <string name="pref_fetch_safe">Safe mode</string>
     <string name="pref_fetch_safe_summary_on">Does not fetch R18 image</string>
     <string name="pref_fetch_safe_summary_off">Fetch R18 image</string>
+
+    <string name="pref_fetch_number">Fetch number</string>
+    <string name="pref_fetch_number_summary">Number of image data fetched at each update</string>
 
     <string name="pref_fetch_mode">Mode</string>
     <string name="pref_fetch_mode_dialog">Fetch mode</string>
@@ -68,6 +72,4 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="pref_fetch_number">Fetch number</string>
-    <string name="pref_fetch_number_summary">Number of image data fetched at each update</string>
 </resources>
