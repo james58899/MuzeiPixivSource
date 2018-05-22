@@ -1,3 +1,7 @@
+## dont obfuscate
+-dontobfuscate
+
+
 ## kotlin coroutines
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
@@ -35,10 +39,6 @@
 -keep class * implements com.google.gson.JsonDeserializer
 
 ##---------------End: proguard configuration for Gson  ----------
-
-
-## Google WTF?
--keep class android.support.v7.app.AppCompatViewInflater{ <init>(...); }
 
 
 ## Crashlytics
