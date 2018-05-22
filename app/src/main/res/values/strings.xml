@@ -3,11 +3,9 @@
     <string name="source_title" translatable="false">Pixiv</string>
 
     <!--Activity-->
-    <string name="title_activity_settings">Settings</string>
     <string name="muzei_not_install">Muzei not installed, install from Play Store?</string>
 
     <!--Toast-->
-    <string name="login_success">Login successful!</string>
     <string name="login_fail">Login failed</string>
 
     <!--Preference-->
@@ -70,6 +68,5 @@
     <string name="login_button">Login</string>
     <string name="error_invalid_username">This username is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 </resources>
