@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/pref_title_account">
         <Preference
                 android:key="account"
@@ -40,6 +41,8 @@
                 android:summary="@string/pref_fetch_size_summary"/>
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
             android:defaultValue="30"
+            app:max="100"
+            app:min="1"
             android:key="fetch_number"
             android:summary="@string/pref_fetch_number_summary"
             android:title="@string/pref_fetch_number" />

@@ -13,6 +13,8 @@ import one.oktw.muzeipixivsource.R
 
 class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
     private var value = 0
+    private val min: Int
+    private val max: Int
     private lateinit var picker: NumberPicker
 
     init {
@@ -21,6 +23,14 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
 
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
+
+        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.NumberPicker, 0, 0)
+        try {
+            min = a.getInt(R.styleable.NumberPicker_min, 0)
+            max = a.getInt(R.styleable.NumberPicker_max, 100)
+        } finally {
+            a.recycle()
+        }
     }
 
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
@@ -40,9 +50,8 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         super.onBindDialogView(view)
         picker = view.findViewById(R.id.numberPicker)
 
-        // TODO read value from xml
-        picker.minValue = 1
-        picker.maxValue = 100
+        picker.minValue = min
+        picker.maxValue = max
         picker.value = value
     }
 
