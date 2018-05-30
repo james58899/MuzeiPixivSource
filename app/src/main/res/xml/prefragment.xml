@@ -23,24 +23,12 @@
     <PreferenceCategory
         android:key="fetch"
         android:title="@string/pref_title_fetch">
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="fetch_origin"
             android:summaryOff="@string/pref_fetch_origin_summary_off"
             android:summaryOn="@string/pref_fetch_origin_summary_on"
             android:title="@string/pref_fetch_origin" />
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="fetch_safe"
-            android:summaryOff="@string/pref_fetch_safe_summary_off"
-            android:summaryOn="@string/pref_fetch_safe_summary_on"
-            android:title="@string/pref_fetch_safe" />
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="fetch_size"
-            android:summary="@string/pref_fetch_size_summary"
-            android:title="@string/pref_fetch_size" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
             android:defaultValue="30"
             android:key="fetch_number"
@@ -69,5 +57,20 @@
             android:summaryOff="@string/pref_fetch_bookmark_summary_off"
             android:summaryOn="@string/pref_fetch_bookmark_summary_on"
             android:title="@string/pref_fetch_bookmark" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="filter"
+        android:title="@string/pref_title_filter">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="filter_safe"
+            android:summaryOff="@string/pref_filter_safe_summary_off"
+            android:summaryOn="@string/pref_filter_safe_summary_on"
+            android:title="@string/pref_filter_safe" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="fetch_size"
+            android:summary="@string/pref_filter_size_summary"
+            android:title="@string/pref_filter_size" />
     </PreferenceCategory>
 </PreferenceScreen>
