@@ -3,69 +3,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/pref_title_account">
         <Preference
-                android:key="account"
-                android:title="@string/pref_pixiv_sign_in"
-                android:summary="@string/pref_pixiv_summary"/>
+            android:key="account"
+            android:summary="@string/pref_pixiv_summary"
+            android:title="@string/pref_pixiv_sign_in" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_title_muzei">
         <Preference
-                android:key="muzei"
-                android:title="@string/pref_muzei"
-                android:summary="@string/pref_muzei_summary"/>
+            android:key="muzei"
+            android:summary="@string/pref_muzei_summary"
+            android:title="@string/pref_muzei" />
         <ListPreference
-                android:key="muzei_interval"
-                android:defaultValue="60"
-                android:title="@string/pref_muzei_interval"
-                android:entries="@array/pref_muzei_interval_entities"
-                android:entryValues="@array/pref_muzei_interval_value"
-                android:summary="%s"/>
+            android:defaultValue="60"
+            android:entries="@array/pref_muzei_interval_entities"
+            android:entryValues="@array/pref_muzei_interval_value"
+            android:key="muzei_interval"
+            android:summary="%s"
+            android:title="@string/pref_muzei_interval" />
     </PreferenceCategory>
-    <PreferenceCategory android:key="fetch" android:title="@string/pref_title_fetch">
+    <PreferenceCategory
+        android:key="fetch"
+        android:title="@string/pref_title_fetch">
 
         <SwitchPreference
-                android:key="fetch_origin"
-                android:defaultValue="false"
-                android:title="@string/pref_fetch_origin"
-                android:summaryOn="@string/pref_fetch_origin_summary_on"
-                android:summaryOff="@string/pref_fetch_origin_summary_off"/>
+            android:defaultValue="false"
+            android:key="fetch_origin"
+            android:summaryOff="@string/pref_fetch_origin_summary_off"
+            android:summaryOn="@string/pref_fetch_origin_summary_on"
+            android:title="@string/pref_fetch_origin" />
         <SwitchPreference
-                android:key="fetch_safe"
-                android:defaultValue="true"
-                android:title="@string/pref_fetch_safe"
-                android:summaryOn="@string/pref_fetch_safe_summary_on"
-                android:summaryOff="@string/pref_fetch_safe_summary_off"/>
+            android:defaultValue="true"
+            android:key="fetch_safe"
+            android:summaryOff="@string/pref_fetch_safe_summary_off"
+            android:summaryOn="@string/pref_fetch_safe_summary_on"
+            android:title="@string/pref_fetch_safe" />
         <SwitchPreference
-                android:key="fetch_size"
-                android:defaultValue="true"
-                android:title="@string/pref_fetch_size"
-                android:summary="@string/pref_fetch_size_summary"/>
+            android:defaultValue="true"
+            android:key="fetch_size"
+            android:summary="@string/pref_fetch_size_summary"
+            android:title="@string/pref_fetch_size" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
             android:defaultValue="30"
-            app:max="100"
-            app:min="1"
             android:key="fetch_number"
             android:summary="@string/pref_fetch_number_summary"
-            android:title="@string/pref_fetch_number" />
+            android:title="@string/pref_fetch_number"
+            app:max="100"
+            app:min="1" />
         <ListPreference
-                android:key="fetch_mode"
-                android:defaultValue="0"
-                android:title="@string/pref_fetch_mode"
-                android:entries="@array/pref_fetch_mode_entities"
-                android:entryValues="@array/pref_fetch_mode_value"
-                android:dialogTitle="@string/pref_fetch_mode_dialog"
-                android:summary="%s"/>
+            android:defaultValue="0"
+            android:dialogTitle="@string/pref_fetch_mode_dialog"
+            android:entries="@array/pref_fetch_mode_entities"
+            android:entryValues="@array/pref_fetch_mode_value"
+            android:key="fetch_mode"
+            android:summary="%s"
+            android:title="@string/pref_fetch_mode" />
         <ListPreference
-                android:key="fetch_mode_ranking"
-                android:defaultValue="Weekly"
-                android:title="@string/pref_fetch_ranking"
-                android:entries="@array/pref_fetch_ranking_mode"
-                android:entryValues="@array/pref_fetch_ranking_value"
-                android:summary="%s"/>
+            android:defaultValue="Weekly"
+            android:entries="@array/pref_fetch_ranking_mode"
+            android:entryValues="@array/pref_fetch_ranking_value"
+            android:key="fetch_mode_ranking"
+            android:summary="%s"
+            android:title="@string/pref_fetch_ranking" />
         <SwitchPreference
-                android:key="fetch_mode_bookmark"
-                android:defaultValue="false"
-                android:title="@string/pref_fetch_bookmark"
-                android:summaryOn="@string/pref_fetch_bookmark_summary_on"
-                android:summaryOff="@string/pref_fetch_bookmark_summary_off"/>
+            android:defaultValue="false"
+            android:key="fetch_mode_bookmark"
+            android:summaryOff="@string/pref_fetch_bookmark_summary_off"
+            android:summaryOn="@string/pref_fetch_bookmark_summary_on"
+            android:title="@string/pref_fetch_bookmark" />
     </PreferenceCategory>
 </PreferenceScreen>
