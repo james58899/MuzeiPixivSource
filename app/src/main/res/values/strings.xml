@@ -71,4 +71,8 @@
     <string name="error_invalid_username">This username is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_field_required">This field is required</string>
+    <string name="pref_filter_view_summary">Limit the minimum number of views</string>
+    <string name="pref_filter_view">Minimum views</string>
+    <string name="pref_filter_bookmark_summary">Limit the minimum number of bookmarks</string>
+    <string name="pref_filter_bookmark">Minimum bookmarks</string>
 </resources>

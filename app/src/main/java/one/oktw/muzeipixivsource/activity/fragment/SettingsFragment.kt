@@ -40,6 +40,8 @@ class SettingsFragment : PreferenceFragment() {
         const val KEY_FETCH_MODE_BOOKMARK = "fetch_mode_bookmark"
         const val KEY_FILTER_SAFE = "filter_safe"
         const val KEY_FILTER_SIZE = "filter_size"
+        const val KEY_FILTER_VIEW = "filter_view"
+        const val KEY_FILTER_BOOKMARK = "filter_bookmark"
         const val KEY_PIXIV_ACCESS_TOKEN = "pixiv_access_token"
         const val KEY_PIXIV_REFRESH_TOKEN = "pixiv_refresh_token"
         const val KEY_PIXIV_DEVICE_TOKEN = "pixiv_device_token"

@@ -72,5 +72,19 @@
             android:key="fetch_size"
             android:summary="@string/pref_filter_size_summary"
             android:title="@string/pref_filter_size" />
+        <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:defaultValue="0"
+            android:key="filter_view"
+            android:summary="@string/pref_filter_view_summary"
+            android:title="@string/pref_filter_view"
+            app:max="100000"
+            app:min="0" />
+        <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:defaultValue="0"
+            android:key="filter_bookmark"
+            android:summary="@string/pref_filter_bookmark_summary"
+            android:title="@string/pref_filter_bookmark"
+            app:max="100000"
+            app:min="0" />
     </PreferenceCategory>
 </PreferenceScreen>

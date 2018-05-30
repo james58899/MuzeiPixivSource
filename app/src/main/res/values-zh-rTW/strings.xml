@@ -49,4 +49,8 @@
     <string name="pref_fetch_number_summary">每次更新時抓取的圖片資料數量</string>
     <string name="pref_muzei_interval_never">永不</string>
     <string name="pref_title_filter">過濾</string>
+    <string name="pref_filter_view_summary">限制最少瀏覽數</string>
+    <string name="pref_filter_view">瀏覽數</string>
+    <string name="pref_filter_bookmark_summary">限制最少收藏數</string>
+    <string name="pref_filter_bookmark">收藏數</string>
 </resources>

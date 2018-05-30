@@ -6,12 +6,14 @@ import java.io.File
 import java.util.*
 
 class Pixiv(
-        private val token: String?,
-        private val originImage: Boolean = false,
-        private val safety: Boolean = true,
-        private val size: Boolean = true,
-        private val number: Int = 30,
-        savePath: File
+    private val token: String?,
+    private val originImage: Boolean = false,
+    private val safety: Boolean = true,
+    private val size: Boolean = true,
+    private val number: Int = 30,
+    private val minView: Int = 0,
+    private val minBookmark: Int = 0,
+    savePath: File
 ) {
     private val savePath = File(savePath, "pixiv").apply { mkdir() }
 
@@ -38,6 +40,8 @@ class Pixiv(
     private fun processList(list: List<Illust>): DataImageInfo {
         return list.let(::filterSafety)
             .let(::filterSize)
+            .let(::filterView)
+            .let(::filterBookmark)
             .let(::random)
             .let(::processIllust)
     }
@@ -45,6 +49,11 @@ class Pixiv(
     private fun filterSafety(list: List<Illust>) = if (safety) list.filter { it.sanityLevel <= 4 } else list
 
     private fun filterSize(list: List<Illust>) = if (size) list.filter { it.height > 1000 } else list
+
+    private fun filterView(list: List<Illust>) = if (minView > 0) list.filter { it.totalView >= minView } else list
+
+    private fun filterBookmark(list: List<Illust>) =
+        if (minBookmark > 0) list.filter { it.totalBookmarks >= minBookmark } else list
 
     private fun random(list: List<Illust>) = list[Random().nextInt(list.size)]
 
