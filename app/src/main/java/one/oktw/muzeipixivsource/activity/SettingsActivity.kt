@@ -1,14 +1,13 @@
 package one.oktw.muzeipixivsource.activity
 
 import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.checkInstalled
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.viewMarket
+import org.jetbrains.anko.browse
 
 class SettingsActivity : AppCompatActivity() {
     companion object {
@@ -20,7 +19,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // if click update version notification
         intent.getStringExtra("new_version")?.let {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+            browse(it)
             finish()
         }
 

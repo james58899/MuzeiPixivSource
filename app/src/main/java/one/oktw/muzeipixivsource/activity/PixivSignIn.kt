@@ -3,7 +3,6 @@ package one.oktw.muzeipixivsource.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Patterns
@@ -11,12 +10,12 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
+import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.design.longSnackbar
 
 class PixivSignIn : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +47,12 @@ class PixivSignIn : AppCompatActivity() {
         var cancel = false
         var focusView: View? = null
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid password.
         if (TextUtils.isEmpty(textPassword)) {
             password.error = getString(R.string.error_field_required)
             focusView = password
             cancel = true
-        } else if (!isPasswordValid(textPassword)) {
+        } else if (textPassword.length < 6) {
             password.error = getString(R.string.error_invalid_password)
             focusView = password
             cancel = true
@@ -80,7 +79,7 @@ class PixivSignIn : AppCompatActivity() {
             // disable button
             login_button.isEnabled = false
 
-            val login = loginPixiv(textUsername, textPassword)
+            val login = bg { PixivOAuth.login(textUsername, textPassword) }.await()
 
             if (!login.has_error && login.response != null) {
                 setResult(Activity.RESULT_OK, Intent().putExtra("response", login.response))
@@ -89,12 +88,10 @@ class PixivSignIn : AppCompatActivity() {
                 login_button.isEnabled = true
 
                 // TODO show error message
-                Snackbar.make(login_layout, R.string.login_fail, Snackbar.LENGTH_LONG).show()
+                longSnackbar(login_layout, R.string.login_fail)
             }
         }
     }
-
-    private fun isPasswordValid(password: String) = password.length >= 6
 
     private fun isUsernameValid(username: String): Boolean {
         // match email
@@ -104,9 +101,5 @@ class PixivSignIn : AppCompatActivity() {
         if (username.matches(Regex("[a-z0-9_-]{3,32}"))) return true
 
         return false
-    }
-
-    private suspend fun loginPixiv(username: String, password: String) = withContext(CommonPool) {
-        PixivOAuth.login(username, password)
     }
 }
