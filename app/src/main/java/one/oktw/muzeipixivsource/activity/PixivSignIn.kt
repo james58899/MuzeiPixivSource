@@ -1,21 +1,20 @@
 package one.oktw.muzeipixivsource.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import org.jetbrains.anko.coroutines.experimental.bg
-import org.jetbrains.anko.design.longSnackbar
 
 class PixivSignIn : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,13 +81,13 @@ class PixivSignIn : AppCompatActivity() {
             val login = bg { PixivOAuth.login(textUsername, textPassword) }.await()
 
             if (!login.has_error && login.response != null) {
-                setResult(Activity.RESULT_OK, Intent().putExtra("response", login.response))
+                setResult(RESULT_OK, Intent().putExtra("response", login.response))
                 finish()
             } else {
                 login_button.isEnabled = true
 
                 // TODO show error message
-                longSnackbar(login_layout, R.string.login_fail)
+                Snackbar.make(login_layout, R.string.login_fail, Snackbar.LENGTH_LONG)
             }
         }
     }

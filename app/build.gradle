@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "one.oktw.muzeipixivsource"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 16
-        versionName "1.9.0"
+        versionCode 17
+        versionName "1.9.1-dev"
     }
     buildTypes {
         release {
@@ -23,6 +23,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    lintOptions {
+        check 'Interoperability'
+    }
 }
 
 kotlin {
@@ -33,19 +36,21 @@ kotlin {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
+    implementation 'androidx.preference:preference:1.0.0-alpha3'
+    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.3'
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
-    implementation "org.jetbrains.anko:anko-design:$anko_version"
+//    implementation "org.jetbrains.anko:anko-design:$anko_version"
     implementation "org.jetbrains.anko:anko-coroutines:$anko_version"
-    implementation 'androidx.core:core-ktx:0.3'
     implementation 'com.google.android.apps.muzei:muzei-api:2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation "com.google.firebase:firebase-core:16.0.0"
+    implementation 'com.google.android.material:material:1.0.0-alpha3'
+    implementation "com.google.firebase:firebase-core:16.0.1"
     implementation "com.google.firebase:firebase-messaging:17.0.0"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 }
 
 apply plugin: 'com.google.gms.google-services'

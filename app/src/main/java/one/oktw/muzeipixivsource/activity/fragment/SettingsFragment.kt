@@ -1,11 +1,11 @@
 package one.oktw.muzeipixivsource.activity.fragment
 
-import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.preference.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.edit
+import androidx.preference.*
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
@@ -13,7 +13,7 @@ import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
 import java.util.Arrays.asList
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var fetchCategory: PreferenceCategory
     private lateinit var fetchMode: ListPreference
     private lateinit var rankingPreference: ListPreference
@@ -50,10 +50,8 @@ class SettingsFragment : PreferenceFragment() {
         const val KEY_PIXIV_USER_USERNAME = "pixiv_user_username"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        addPreferencesFromResource(R.xml.prefragment)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.prefragment, rootKey)
 
         initAccountButton(findPreference(KEY_ACCOUNT))
         initMuzeiButton(findPreference(KEY_MUZEI))
@@ -73,7 +71,7 @@ class SettingsFragment : PreferenceFragment() {
 
         preference.setOnPreferenceClickListener {
             if (it.sharedPreferences.contains(KEY_PIXIV_ACCESS_TOKEN)) {
-                AlertDialog.Builder(activity)
+                AlertDialog.Builder(requireContext())
                     .setMessage(R.string.pref_pixiv_sign_out_confirm)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         logout()
@@ -90,7 +88,7 @@ class SettingsFragment : PreferenceFragment() {
 
     private fun initMuzeiButton(preference: Preference) {
         preference.setOnPreferenceClickListener {
-            startActivity(launchOrMarket(activity, "net.nurik.roman.muzei"))
+            startActivity(launchOrMarket(requireContext(), "net.nurik.roman.muzei"))
 
             true
         }
