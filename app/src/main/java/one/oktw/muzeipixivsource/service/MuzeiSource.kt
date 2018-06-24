@@ -4,7 +4,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
-import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.N
 import android.preference.PreferenceManager
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.content.edit
@@ -59,11 +60,10 @@ class MuzeiSource : RemoteMuzeiArtSource("Pixiv") {
     }
 
     override fun onTryUpdate(reason: Int) {
-        // Check has background connect restrict
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
-                if (restrictBackgroundStatus == RESTRICT_BACKGROUND_STATUS_ENABLED) throw RetryException()
-            }
+        // Check has network and not background connect restrict
+        (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
+            if (activeNetworkInfo?.isConnected != true) throw RetryException()
+            if (SDK_INT >= N && restrictBackgroundStatus == RESTRICT_BACKGROUND_STATUS_ENABLED) throw RetryException()
         }
 
         // only update token on auto change
