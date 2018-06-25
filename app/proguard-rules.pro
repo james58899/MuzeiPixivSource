@@ -45,3 +45,8 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+## workaround https://youtrack.jetbrains.com/issue/KT-24986
+-keepclassmembers class  *  {
+    void $$clinit();
+}
