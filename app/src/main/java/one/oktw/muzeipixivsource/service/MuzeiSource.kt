@@ -6,9 +6,9 @@ import android.net.ConnectivityManager
 import android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.N
-import android.preference.PreferenceManager
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.Artwork
 import com.google.android.apps.muzei.api.MuzeiArtSource
