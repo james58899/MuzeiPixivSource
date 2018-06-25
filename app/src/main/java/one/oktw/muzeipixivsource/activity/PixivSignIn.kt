@@ -10,11 +10,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
-import org.jetbrains.anko.coroutines.experimental.bg
 
 class PixivSignIn : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +79,7 @@ class PixivSignIn : AppCompatActivity() {
             // disable button
             login_button.isEnabled = false
 
-            val login = bg { PixivOAuth.login(textUsername, textPassword) }.await()
+            val login = withContext(DefaultDispatcher) { PixivOAuth.login(textUsername, textPassword) }
 
             if (!login.has_error && login.response != null) {
                 setResult(RESULT_OK, Intent().putExtra("response", login.response))
