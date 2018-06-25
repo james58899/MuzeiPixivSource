@@ -2,20 +2,25 @@ package one.oktw.muzeipixivsource.activity.preference
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import android.preference.DialogPreference
 import android.preference.Preference
 import android.util.AttributeSet
 import android.view.View
 import android.widget.NumberPicker
+import androidx.preference.DialogPreference
+import androidx.preference.PreferenceDialogFragmentCompat
 import one.oktw.muzeipixivsource.R
 
 class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
-    private var value = 0
-    private val min: Int
-    private val max: Int
-    private lateinit var picker: NumberPicker
+    var value = 0
+        set(value) {
+            field = value
+            persistInt(value)
+        }
+    val min: Int
+    val max: Int
 
     init {
         dialogLayoutResource = R.layout.numberpicker_dialog
@@ -46,30 +51,11 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         }
     }
 
-    override fun onBindDialogView(view: View) {
-        super.onBindDialogView(view)
-        picker = view.findViewById(R.id.numberPicker)
-
-        picker.minValue = min
-        picker.maxValue = max
-        picker.value = value
-    }
-
-    override fun onDialogClosed(positiveResult: Boolean) {
-        if (positiveResult) {
-            picker.clearFocus()
-            value = picker.value
-            persistInt(value)
-        } else {
-            value = getPersistedInt(1)
-        }
-    }
-
     override fun onSaveInstanceState(): Parcelable {
-        return if (this::picker.isInitialized) {
-            SavedState(super.onSaveInstanceState()).apply { value = picker.value }
-        } else {
+        return if (isPersistent) {
             super.onSaveInstanceState()
+        } else {
+            SavedState(super.onSaveInstanceState()).also { it.value = value }
         }
     }
 
@@ -90,6 +76,51 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         override fun writeToParcel(dest: Parcel, flags: Int) {
             super.writeToParcel(dest, flags)
             dest.writeInt(value)
+        }
+    }
+
+    class Fragment : PreferenceDialogFragmentCompat() {
+        companion object {
+            fun newInstance(key: String): Fragment {
+                return Fragment().apply { arguments = Bundle(1).apply { putString(ARG_KEY, key) } }
+            }
+        }
+
+        private val saveKey = "NumberPickerPreferenceFragment.value"
+        private var value = 0
+        private lateinit var picker: NumberPicker
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            value = savedInstanceState?.getInt(saveKey) ?: (preference as NumberPickerPreference).value
+        }
+
+        override fun onSaveInstanceState(outState: Bundle) {
+            super.onSaveInstanceState(outState)
+
+            picker.clearFocus()
+            value = picker.value
+            outState.putInt(saveKey, value)
+        }
+
+        override fun onBindDialogView(view: View) {
+            super.onBindDialogView(view)
+
+            val preference = preference as NumberPickerPreference
+            picker = view.findViewById(R.id.numberPicker)
+
+            picker.minValue = preference.min
+            picker.maxValue = preference.max
+            picker.value = value
+        }
+
+        override fun onDialogClosed(positiveResult: Boolean) {
+            if (positiveResult) {
+                picker.clearFocus()
+                value = picker.value
+                (preference as NumberPickerPreference).value = value
+            }
         }
     }
 }
