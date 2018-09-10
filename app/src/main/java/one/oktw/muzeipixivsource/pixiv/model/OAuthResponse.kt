@@ -12,12 +12,12 @@ data class OAuthResponse(
     val deviceToken: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
+        parcel.readString()!!,
         parcel.readInt(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readParcelable(User::class.java.classLoader),
-        parcel.readString()
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readParcelable(User::class.java.classLoader)!!,
+        parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
