@@ -32,7 +32,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // Preference keys
         const val KEY_ACCOUNT = "account"
         const val KEY_MUZEI = "muzei"
-        const val KEY_MUZEI_CHANGE_INTERVAL = "muzei_interval"
         const val KEY_FETCH = "fetch"
         const val KEY_FETCH_ORIGIN = "fetch_origin"
         const val KEY_FETCH_NUMBER = "fetch_number"

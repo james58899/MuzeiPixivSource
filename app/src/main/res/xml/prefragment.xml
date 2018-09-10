@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:key="muzei"
+        android:summary="@string/pref_muzei_summary"
+        android:title="@string/pref_muzei" />
     <PreferenceCategory android:title="@string/pref_title_account">
         <Preference
             android:key="account"
             android:summary="@string/pref_pixiv_summary"
             android:title="@string/pref_pixiv_sign_in" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_title_muzei">
-        <Preference
-            android:key="muzei"
-            android:summary="@string/pref_muzei_summary"
-            android:title="@string/pref_muzei" />
-        <ListPreference
-            android:defaultValue="60"
-            android:entries="@array/pref_muzei_interval_entities"
-            android:entryValues="@array/pref_muzei_interval_value"
-            android:key="muzei_interval"
-            android:summary="%s"
-            android:title="@string/pref_muzei_interval" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="fetch"
