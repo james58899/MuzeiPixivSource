@@ -53,4 +53,6 @@
     <string name="pref_filter_view">瀏覽數</string>
     <string name="pref_filter_bookmark_summary">限制最少收藏數</string>
     <string name="pref_filter_bookmark">收藏數</string>
+    <string name="pref_fetch_cleanup_summary">從Muzei的歷史中刪除上次抓取的圖片</string>
+    <string name="pref_fetch_cleanup">清理歷史</string>
 </resources>

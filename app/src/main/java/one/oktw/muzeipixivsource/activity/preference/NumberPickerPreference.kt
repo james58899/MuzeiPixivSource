@@ -42,13 +42,8 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         return a.getInteger(index, 1)
     }
 
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        if (restorePersistedValue) {
-            value = getPersistedInt(1)
-        } else {
-            value = defaultValue as Int
-            persistInt(value)
-        }
+    override fun onSetInitialValue(defaultValue: Any?) {
+        value = getPersistedInt(defaultValue as Int)
     }
 
     override fun onSaveInstanceState(): Parcelable {

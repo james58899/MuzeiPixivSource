@@ -8,6 +8,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.R
@@ -16,6 +17,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_FALLBACK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RECOMMEND
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_CLEANUP
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_NUMBER
@@ -39,7 +41,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     private lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate(): Boolean {
-        PreferenceManager.setDefaultValues(context, R.xml.prefragment, false)
+        PreferenceManager.setDefaultValues(context, R.xml.prefragment, true)
 
         preference = PreferenceManager.getDefaultSharedPreferences(context)
         analytics = FirebaseAnalytics.getInstance(context!!)
@@ -48,7 +50,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     override fun onLoadRequested(initial: Boolean) {
-        updateToken()
+        runBlocking { updateToken() }
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30))
@@ -90,7 +92,7 @@ class MuzeiProvider : MuzeiArtProvider() {
             .body()!!.byteStream()
     }
 
-    private fun updateToken() {
+    private suspend fun updateToken() {
         analytics.logEvent("update_token", null)
 
         try {
@@ -105,6 +107,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     private fun publish(list: ArrayList<Illust>) {
+        var first = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
         val filterSize = preference.getBoolean(KEY_FILTER_SIZE, true)
@@ -132,7 +135,14 @@ class MuzeiProvider : MuzeiArtProvider() {
                         .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
                         .persistentUri(imageUrl)
                         .build()
-                        .let(::addArtwork)
+                        .let { artwork ->
+                            if (first) {
+                                setArtwork(artwork)
+                                first = false
+                            } else {
+                                addArtwork(artwork)
+                            }
+                        }
                 }
             } else {
                 val imageUrl = if (originImage) {
@@ -149,7 +159,14 @@ class MuzeiProvider : MuzeiArtProvider() {
                     .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
                     .persistentUri(imageUrl)
                     .build()
-                    .let(::addArtwork)
+                    .let { artwork ->
+                        if (first) {
+                            setArtwork(artwork)
+                            first = false
+                        } else {
+                            addArtwork(artwork)
+                        }
+                    }
             }
         }
     }

@@ -75,4 +75,6 @@
     <string name="pref_filter_view">Minimum views</string>
     <string name="pref_filter_bookmark_summary">Limit the minimum number of bookmarks</string>
     <string name="pref_filter_bookmark">Minimum bookmarks</string>
+    <string name="pref_fetch_cleanup_summary">Remove previous fetch images from muzei history</string>
+    <string name="pref_fetch_cleanup">Clean up history</string>
 </resources>

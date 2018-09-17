@@ -10,16 +10,18 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.Main
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 
-class PixivSignIn : AppCompatActivity() {
+class PixivSignIn : AppCompatActivity(), CoroutineScope {
+    private lateinit var job: Job
+    override val coroutineContext = Dispatchers.Main + job
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        job = Job()
 
         // Set up the login form.
         setContentView(R.layout.activity_pixiv_login)
@@ -33,6 +35,11 @@ class PixivSignIn : AppCompatActivity() {
         }
 
         login_button.setOnClickListener { login() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     private fun login() {
@@ -69,7 +76,7 @@ class PixivSignIn : AppCompatActivity() {
             cancel = true
         }
 
-        if (cancel) focusView?.requestFocus() else launch(UI) {
+        if (cancel) focusView?.requestFocus() else launch {
             // close IME
             (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).apply {
                 hideSoftInputFromWindow(username.windowToken, 0)
@@ -79,7 +86,7 @@ class PixivSignIn : AppCompatActivity() {
             // disable button
             login_button.isEnabled = false
 
-            val login = withContext(DefaultDispatcher) { PixivOAuth.login(textUsername, textPassword) }
+            val login = withContext(Dispatchers.IO) { PixivOAuth.login(textUsername, textPassword) }
 
             if (!login.has_error && login.response != null) {
                 setResult(RESULT_OK, Intent().putExtra("response", login.response))
