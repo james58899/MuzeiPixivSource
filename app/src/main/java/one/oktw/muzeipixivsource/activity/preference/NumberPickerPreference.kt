@@ -43,7 +43,7 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
-        value = getPersistedInt(defaultValue as Int)
+        value = getPersistedInt(defaultValue as? Int ?: value)
     }
 
     override fun onSaveInstanceState(): Parcelable {
