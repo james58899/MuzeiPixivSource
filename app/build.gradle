@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "one.oktw.muzeipixivsource"
         minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 20
-        versionName "1.9.4"
+        targetSdkVersion 28
+        versionCode 21
+        versionName "2.0.0"
     }
     buildTypes {
         release {
@@ -36,18 +36,20 @@ kotlin {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-    implementation 'androidx.preference:preference:1.0.0-alpha3'
-    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.preference:preference-ktx:1.0.0'
+    implementation 'android.arch.work:work-runtime-ktx:1.0.0-alpha10'
+    implementation 'androidx.core:core-ktx:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.23.3'
-    implementation 'com.google.android.apps.muzei:muzei-api:2.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.30.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.google.android.material:material:1.0.0-alpha3'
-    implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-messaging:17.0.0"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.google.android.apps.muzei:muzei-api:3.0.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

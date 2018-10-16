@@ -4,7 +4,9 @@
 一個定時自動抓取[Pixiv]上的插畫並設定為桌布的小程式
 
 ## 功能
-* 定時更換
+* 定時更換 ([Muzei] 功能)
+* 圖片記錄 ([Muzei] 功能)
+* 僅在使用WiFi時更新 ([Muzei] 功能)
 * 下載原始解析度圖片
 * 支援的模式
   * 推薦
@@ -24,7 +26,7 @@
 5. 享受好看的桌布！
 
 ## 一些截圖
-<img src="https://user-images.githubusercontent.com/5798637/38470351-17574e20-3b94-11e8-8824-59a59ce505d2.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/38470371-62ac6d1a-3b94-11e8-9104-535228bcaf70.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/38470375-6a1a7c5e-3b94-11e8-9175-d4816bb14c9b.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/38470378-705d2936-3b94-11e8-9938-a53d2b6e7a94.png" width="50%"/>
+<img src="https://user-images.githubusercontent.com/5798637/45924379-8924e780-bf31-11e8-907e-b6a2a7fc14bd.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/45924380-89bd7e00-bf31-11e8-8b3d-f353534730ae.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/45924381-89bd7e00-bf31-11e8-8825-57b646a7bb09.png" width="50%"/><img src="https://user-images.githubusercontent.com/5798637/45924382-89bd7e00-bf31-11e8-8347-4008e5454050.png" width="50%"/>
 
 [Muzei]: https://play.google.com/store/apps/details?id=net.nurik.roman.muzei
 [Muzei Pixiv Source]: https://github.com/james58899/MuzeiPixivSource/releases/latest

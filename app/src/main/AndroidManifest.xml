@@ -31,18 +31,6 @@
             android:label="@string/title_activity_pixiv_login" />
 
         <service
-            android:name=".service.MuzeiSource"
-            android:label="@string/source_title"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="com.google.android.apps.muzei.api.MuzeiArtSource" />
-            </intent-filter>
-
-            <meta-data
-                android:name="settingsActivity"
-                android:value=".activity.SettingsActivity" />
-        </service>
-        <service
             android:name=".service.CloudMessage"
             tools:ignore="ExportedService">
             <intent-filter>
@@ -51,13 +39,18 @@
         </service>
 
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="one.oktw.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+            android:name="one.oktw.muzeipixivsource.provider.MuzeiProvider"
+            android:authorities="one.oktw.muzeipixivsource"
+            android:description="@string/app_name"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="com.google.android.apps.muzei.api.ACCESS_PROVIDER">
+            <intent-filter>
+                <action android:name="com.google.android.apps.muzei.api.MuzeiArtProvider" />
+            </intent-filter>
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:name="settingsActivity"
+                android:value="one.oktw.muzeipixivsource.activity.SettingsActivity" />
         </provider>
     </application>
 </manifest>
