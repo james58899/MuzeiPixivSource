@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
 import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.Main
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 
 class PixivSignIn : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
-    override val coroutineContext = Dispatchers.Main + job
+    override val coroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
