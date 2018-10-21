@@ -6,6 +6,6 @@ data class OAuth(
     val errors: Errors? = null
 ) {
     data class Errors(val system: System) {
-        data class System(val message: String, val code: Int)
+        data class System(val message: String, val code: Int = -1)
     }
 }

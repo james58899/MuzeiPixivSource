@@ -13,6 +13,8 @@ import kotlinx.android.synthetic.main.activity_pixiv_login.*
 import kotlinx.coroutines.experimental.*
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
+import one.oktw.muzeipixivsource.pixiv.model.OAuth
+import java.io.IOException
 
 class PixivSignIn : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
@@ -86,7 +88,11 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope {
             // disable button
             login_button.isEnabled = false
 
-            val login = withContext(Dispatchers.IO) { PixivOAuth.login(textUsername, textPassword) }
+            val login = try {
+                withContext(Dispatchers.IO) { PixivOAuth.login(textUsername, textPassword) }
+            } catch (e: IOException) {
+                OAuth(has_error = true, errors = e.message?.let { OAuth.Errors(OAuth.Errors.System(it)) })
+            }
 
             if (!login.has_error && login.response != null) {
                 setResult(RESULT_OK, Intent().putExtra("response", login.response))
