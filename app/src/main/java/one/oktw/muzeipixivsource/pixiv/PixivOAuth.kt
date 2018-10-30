@@ -14,7 +14,9 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import java.io.IOException
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class PixivOAuth {
     companion object {

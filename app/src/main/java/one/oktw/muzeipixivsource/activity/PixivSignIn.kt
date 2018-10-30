@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_pixiv_login.*
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
