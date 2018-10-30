@@ -18,6 +18,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RECOMMEND
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_CLEANUP
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_FALLBACK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_NUMBER
@@ -53,7 +54,8 @@ class MuzeiProvider : MuzeiArtProvider() {
         runBlocking { updateToken() }
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
-        val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30))
+        val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, true)
+        val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30), fallback = fallback)
 
         try {
             when (if (token == null) FETCH_MODE_FALLBACK else preference.getString(KEY_FETCH_MODE, "0")!!.toInt()) {
@@ -68,16 +70,18 @@ class MuzeiProvider : MuzeiArtProvider() {
                     preference.getBoolean(SettingsFragment.KEY_FETCH_MODE_BOOKMARK, false)
                 ).let(::publish)
             }
-        } catch (e: Exception) {
+        } catch (e1: Exception) {
             // TODO better except handle
-            Log.e("fetch", "fetch update error", e)
-            Crashlytics.logException(e)
-            try {
-                pixiv.getFallback().let(::publish)
-            } catch (e: Exception) {
-                Log.e("fetch", "fetch update fallback error", e)
+            Log.e("fetch", "fetch update error", e1)
+            Crashlytics.logException(e1)
 
-                Crashlytics.logException(e)
+            try {
+                if (fallback) pixiv.getFallback().let(::publish) else throw e1
+            } catch (e2: Exception) {
+                Log.e("fetch", "fetch update fallback error", e2)
+
+                if (e1 != e2) Crashlytics.logException(e2)
+                throw e2
             }
         }
     }

@@ -37,6 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH_NUMBER = "fetch_number"
         const val KEY_FETCH_CLEANUP = "fetch_cleanup"
         const val KEY_FETCH_MODE = "fetch_mode"
+        const val KEY_FETCH_FALLBACK = "fetch_fallback"
         const val KEY_FETCH_MODE_RANKING = "fetch_mode_ranking"
         const val KEY_FETCH_MODE_BOOKMARK = "fetch_mode_bookmark"
         const val KEY_FILTER_SAFE = "filter_safe"
@@ -134,9 +135,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (pref.contains(KEY_PIXIV_ACCESS_TOKEN)) {
             account.title = getString(R.string.pref_pixiv_sign_out)
             findPreference(KEY_FETCH_MODE).isEnabled = true
+            findPreference(KEY_FETCH_FALLBACK).isEnabled = true
         } else {
             account.title = getString(R.string.pref_pixiv_sign_in)
             findPreference(KEY_FETCH_MODE).isEnabled = false
+            findPreference(KEY_FETCH_FALLBACK).isEnabled = false
         }
 
         account.summary = pref.getString(KEY_PIXIV_USER_NAME, getString(R.string.pref_pixiv_summary))

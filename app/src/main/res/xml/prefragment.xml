@@ -40,6 +40,11 @@
             android:key="fetch_mode"
             android:summary="%s"
             android:title="@string/pref_fetch_mode" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="fetch_fallback"
+            android:summary="@string/pref_fetch_fallback_summary"
+            android:title="@string/pref_fetch_fallback" />
         <ListPreference
             android:defaultValue="Weekly"
             android:entries="@array/pref_fetch_ranking_mode"

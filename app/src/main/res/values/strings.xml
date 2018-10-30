@@ -63,6 +63,18 @@
     <string name="pref_filter_safe_summary_on">Does not fetch R18 image</string>
     <string name="pref_filter_safe_summary_off">Fetch R18 image</string>
 
+    <string name="pref_filter_view_summary">Limit the minimum number of views</string>
+    <string name="pref_filter_view">Minimum views</string>
+
+    <string name="pref_filter_bookmark_summary">Limit the minimum number of bookmarks</string>
+    <string name="pref_filter_bookmark">Minimum bookmarks</string>
+
+    <string name="pref_fetch_cleanup_summary">Remove previous fetch images from muzei history</string>
+    <string name="pref_fetch_cleanup">Clean up history</string>
+
+    <string name="pref_fetch_fallback_summary">when fetch failed, try fallback source (walkthrough source)</string>
+    <string name="pref_fetch_fallback">Fallback source</string>
+
     <!-- Login -->
     <string name="title_activity_pixiv_login">Login Pixiv</string>
     <string name="login_username_hint">Username / Email</string>
@@ -71,10 +83,4 @@
     <string name="error_invalid_username">This username is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_field_required">This field is required</string>
-    <string name="pref_filter_view_summary">Limit the minimum number of views</string>
-    <string name="pref_filter_view">Minimum views</string>
-    <string name="pref_filter_bookmark_summary">Limit the minimum number of bookmarks</string>
-    <string name="pref_filter_bookmark">Minimum bookmarks</string>
-    <string name="pref_fetch_cleanup_summary">Remove previous fetch images from muzei history</string>
-    <string name="pref_fetch_cleanup">Clean up history</string>
 </resources>
