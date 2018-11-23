@@ -55,7 +55,7 @@ class MuzeiProvider : MuzeiArtProvider() {
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, true)
-        val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30), fallback = fallback)
+        val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30))
 
         try {
             when (if (token == null) FETCH_MODE_FALLBACK else preference.getString(KEY_FETCH_MODE, "0")!!.toInt()) {

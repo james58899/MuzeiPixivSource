@@ -4,7 +4,7 @@ import one.oktw.muzeipixivsource.pixiv.mode.*
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import java.util.*
 
-class Pixiv(private val token: String?, private val number: Int = 30, private val fallback: Boolean = true) {
+class Pixiv(private val token: String?, private val number: Int = 30) {
     fun getFallback() = Fallback.getImages()
 
     fun getRanking(category: RankingCategory): ArrayList<Illust> {
