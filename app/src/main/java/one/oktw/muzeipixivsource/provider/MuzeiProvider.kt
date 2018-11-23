@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
+import com.google.android.apps.muzei.api.UserCommand
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -37,6 +38,10 @@ import org.jsoup.Jsoup
 import java.io.InputStream
 
 class MuzeiProvider : MuzeiArtProvider() {
+    companion object {
+        private const val COMMAND_FETCH = 1
+    }
+
     private val httpClient = OkHttpClient()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
@@ -94,6 +99,15 @@ class MuzeiProvider : MuzeiArtProvider() {
             .let(httpClient::newCall)
             .execute()
             .body()!!.byteStream()
+    }
+
+    override fun getCommands(artwork: Artwork) = mutableListOf(
+        UserCommand(COMMAND_FETCH, context?.getString(R.string.button_update))
+    )
+
+    override fun onCommand(artwork: Artwork, id: Int) = when (id) {
+        COMMAND_FETCH -> onLoadRequested(false)
+        else -> Unit
     }
 
     private suspend fun updateToken() {
