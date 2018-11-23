@@ -32,7 +32,7 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.NumberPicker, 0, 0)
         try {
             min = a.getInt(R.styleable.NumberPicker_min, 0)
-            max = a.getInt(R.styleable.NumberPicker_max, 100)
+            max = a.getInt(R.styleable.NumberPicker_max, Int.MAX_VALUE)
         } finally {
             a.recycle()
         }

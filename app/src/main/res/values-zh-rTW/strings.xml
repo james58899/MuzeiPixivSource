@@ -33,8 +33,6 @@
     <string name="error_field_required">請填寫這個欄位</string>
     <string name="pref_pixiv_sign_out">登出</string>
     <string name="pref_pixiv_sign_out_confirm">確定登出嗎？</string>
-    <string name="pref_filter_size">過濾大小</string>
-    <string name="pref_filter_size_summary">排除過小的圖片</string>
     <string name="pref_fetch_mode_ranking_daily">每日</string>
     <string name="pref_fetch_mode_ranking_weekly">每週</string>
     <string name="pref_fetch_mode_ranking_monthly">每月</string>
@@ -57,4 +55,6 @@
     <string name="pref_fetch_cleanup">清理歷史</string>
     <string name="pref_fetch_fallback_summary">抓取失敗時嘗試備用來源 (示範來源)</string>
     <string name="pref_fetch_fallback">備用來源</string>
+    <string name="pref_filter_size">最小解析度</string>
+    <string name="pref_filter_size_summary">排除過小的圖片</string>
 </resources>

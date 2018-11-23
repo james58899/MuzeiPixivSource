@@ -114,13 +114,13 @@ class MuzeiProvider : MuzeiArtProvider() {
         var first = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
-        val filterSize = preference.getBoolean(KEY_FILTER_SIZE, true)
+        val filterSize = preference.getInt(KEY_FILTER_SIZE, 0)
         val minView = preference.getInt(KEY_FILTER_VIEW, 0)
         val minBookmark = preference.getInt(KEY_FILTER_BOOKMARK, 0)
 
         list.forEach {
             if (filterNSFW && it.sanityLevel >= 4) return@forEach
-            if (filterSize && it.height < 1000) return@forEach
+            if (filterSize > it.height && filterSize > it.width) return@forEach
             if (minView > it.totalView || minBookmark > it.totalBookmarks) return@forEach
 
             if (it.pageCount > 1) {
