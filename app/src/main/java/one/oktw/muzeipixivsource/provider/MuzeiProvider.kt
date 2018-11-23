@@ -112,9 +112,9 @@ class MuzeiProvider : MuzeiArtProvider() {
 
     private fun publish(list: ArrayList<Illust>) {
         var first = preference.getBoolean(KEY_FETCH_CLEANUP, true)
-        val originImage = preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
         val filterSize = preference.getInt(KEY_FILTER_SIZE, 0)
+        val originImage = if (filterSize > 1200) true else preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val minView = preference.getInt(KEY_FILTER_VIEW, 0)
         val minBookmark = preference.getInt(KEY_FILTER_BOOKMARK, 0)
 
