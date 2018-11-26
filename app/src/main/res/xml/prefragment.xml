@@ -19,7 +19,7 @@
             android:key="fetch_number"
             android:summary="@string/pref_fetch_number_summary"
             android:title="@string/pref_fetch_number"
-            app:max="100"
+            app:max="500"
             app:min="1" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
