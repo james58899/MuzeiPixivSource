@@ -14,12 +14,6 @@
     <PreferenceCategory
         android:key="fetch"
         android:title="@string/pref_title_fetch">
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="fetch_origin"
-            android:summaryOff="@string/pref_fetch_origin_summary_off"
-            android:summaryOn="@string/pref_fetch_origin_summary_on"
-            android:title="@string/pref_fetch_origin" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
             android:defaultValue="30"
             android:key="fetch_number"
@@ -28,10 +22,21 @@
             app:max="100"
             app:min="1" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="fetch_origin"
+            android:summaryOff="@string/pref_fetch_origin_summary_off"
+            android:summaryOn="@string/pref_fetch_origin_summary_on"
+            android:title="@string/pref_fetch_origin" />
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="fetch_cleanup"
             android:summary="@string/pref_fetch_cleanup_summary"
             android:title="@string/pref_fetch_cleanup" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="fetch_fallback"
+            android:summary="@string/pref_fetch_fallback_summary"
+            android:title="@string/pref_fetch_fallback" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/pref_fetch_mode_dialog"
@@ -40,11 +45,6 @@
             android:key="fetch_mode"
             android:summary="%s"
             android:title="@string/pref_fetch_mode" />
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="fetch_fallback"
-            android:summary="@string/pref_fetch_fallback_summary"
-            android:title="@string/pref_fetch_fallback" />
         <ListPreference
             android:defaultValue="Weekly"
             android:entries="@array/pref_fetch_ranking_mode"
