@@ -59,7 +59,7 @@ class MuzeiProvider : MuzeiArtProvider() {
         runBlocking { updateToken() }
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
-        val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, true)
+        val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, false)
         val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30))
 
         try {
