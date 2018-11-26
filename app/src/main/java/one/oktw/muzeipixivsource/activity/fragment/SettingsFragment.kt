@@ -6,11 +6,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.edit
 import androidx.preference.*
+import com.google.android.apps.muzei.api.provider.ProviderContract
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
+import one.oktw.muzeipixivsource.provider.MuzeiProvider
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
 import java.util.Arrays.asList
 
@@ -110,8 +112,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun initFetchMode(preference: Preference) {
         updateFetchModePreference()
 
-        preference.setOnPreferenceChangeListener { _, new ->
-            updateFetchModePreference(new as String)
+        preference.setOnPreferenceChangeListener { pref, new ->
+            if ((pref as ListPreference).value != new) updateFetchModePreference(new as String)
 
             true
         }
@@ -147,23 +149,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun updateFetchModePreference(newValue: String? = null) {
         // init some preference
-        if (!this::fetchCategory.isInitialized)
-            fetchCategory = findPreference(KEY_FETCH) as PreferenceCategory
         if (!this::fetchMode.isInitialized)
             fetchMode = findPreference(KEY_FETCH_MODE) as ListPreference
+        if (!this::fetchCategory.isInitialized)
+            fetchCategory = findPreference(KEY_FETCH) as PreferenceCategory
         if (!this::rankingPreference.isInitialized)
             rankingPreference = findPreference(KEY_FETCH_MODE_RANKING) as ListPreference
         if (!this::bookmarkPreference.isInitialized)
             bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreferenceCompat
 
-        val mode = (newValue ?: fetchMode.value).toInt()
-
         asList(rankingPreference, bookmarkPreference).forEach { fetchCategory.removePreference(it) }
 
         // hide if not login
-        if (fetchMode.isEnabled) when (mode) {
+        if (fetchMode.isEnabled) when (newValue?.toInt() ?: fetchMode.value.toInt()) {
             FETCH_MODE_RANKING -> fetchCategory.addPreference(rankingPreference)
             FETCH_MODE_BOOKMARK -> fetchCategory.addPreference(bookmarkPreference)
+        }
+
+        if (newValue != null) {
+            val context = requireContext()
+            ProviderContract.Artwork.getContentUri(context, MuzeiProvider::class.java)
+                .let { context.contentResolver.delete(it, null, null) }
         }
     }
 
