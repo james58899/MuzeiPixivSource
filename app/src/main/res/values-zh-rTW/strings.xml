@@ -58,4 +58,6 @@
     <string name="pref_filter_size">最小解析度</string>
     <string name="pref_filter_size_summary">排除過小的圖片</string>
     <string name="button_update">抓取新圖片</string>
+    <string name="pref_fetch_random_summary">隨機排序抓取結果</string>
+    <string name="pref_fetch_random">隨機排序</string>
 </resources>

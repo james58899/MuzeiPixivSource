@@ -28,6 +28,11 @@
             android:summaryOn="@string/pref_fetch_origin_summary_on"
             android:title="@string/pref_fetch_origin" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="fetch_random"
+            android:summary="@string/pref_fetch_random_summary"
+            android:title="@string/pref_fetch_random" />
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="fetch_cleanup"
             android:summary="@string/pref_fetch_cleanup_summary"

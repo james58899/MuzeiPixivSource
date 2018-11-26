@@ -24,6 +24,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_NUMBER
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_RANDOM
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_BOOKMARK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SAFE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SIZE
@@ -125,12 +126,15 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     private fun publish(list: ArrayList<Illust>) {
-        var first = preference.getBoolean(KEY_FETCH_CLEANUP, true)
+        val cleanHistory = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
+        val random = preference.getBoolean(KEY_FETCH_RANDOM, false)
         val filterSize = preference.getInt(KEY_FILTER_SIZE, 0)
         val originImage = if (filterSize > 1200) true else preference.getBoolean(KEY_FETCH_ORIGIN, false)
         val minView = preference.getInt(KEY_FILTER_VIEW, 0)
         val minBookmark = preference.getInt(KEY_FILTER_BOOKMARK, 0)
+
+        val artworkList = ArrayList<Artwork>()
 
         list.forEach {
             if (filterNSFW && it.sanityLevel >= 4) return@forEach
@@ -153,14 +157,7 @@ class MuzeiProvider : MuzeiArtProvider() {
                         .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
                         .persistentUri(imageUrl)
                         .build()
-                        .let { artwork ->
-                            if (first) {
-                                setArtwork(artwork)
-                                first = false
-                            } else {
-                                addArtwork(artwork)
-                            }
-                        }
+                        .let(artworkList::add)
                 }
             } else {
                 val imageUrl = if (originImage) {
@@ -177,15 +174,13 @@ class MuzeiProvider : MuzeiArtProvider() {
                     .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
                     .persistentUri(imageUrl)
                     .build()
-                    .let { artwork ->
-                        if (first) {
-                            setArtwork(artwork)
-                            first = false
-                        } else {
-                            addArtwork(artwork)
-                        }
-                    }
+                    .let(artworkList::add)
             }
         }
+
+        if (cleanHistory) delete(contentUri, null, null)
+        if (random) artworkList.shuffle()
+
+        artworkList.forEach { addArtwork(it) }
     }
 }
