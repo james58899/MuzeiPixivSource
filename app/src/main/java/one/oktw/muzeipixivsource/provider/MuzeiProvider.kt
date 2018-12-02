@@ -1,6 +1,8 @@
 package one.oktw.muzeipixivsource.provider
 
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -35,7 +37,10 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
+import one.oktw.muzeipixivsource.util.RAISR
 import org.jsoup.Jsoup
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class MuzeiProvider : MuzeiArtProvider() {
@@ -100,6 +105,16 @@ class MuzeiProvider : MuzeiArtProvider() {
             .let(httpClient::newCall)
             .execute()
             .body()!!.byteStream()
+            .let(BitmapFactory::decodeStream)
+            .let { RAISR.test(context!!, it) }
+            .run {
+                ByteArrayOutputStream()
+                    .use {
+                        compress(Bitmap.CompressFormat.JPEG, 100, it)
+                        it.toByteArray()
+                    }
+                    .let(::ByteArrayInputStream)
+            }
     }
 
     override fun getCommands(artwork: Artwork) = mutableListOf(
