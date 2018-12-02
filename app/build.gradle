@@ -9,6 +9,8 @@ android {
         applicationId "one.oktw.muzeipixivsource"
         minSdkVersion 19
         targetSdkVersion 28
+        renderscriptTargetApi 28
+        renderscriptSupportModeEnabled true
         versionCode 27
         versionName "2.3.0"
     }
