@@ -73,7 +73,7 @@ class PixivOAuth {
                     override fun onFailure(call: Call, e: IOException) = it.resumeWithException(e)
 
                     override fun onResponse(call: Call, response: Response) {
-                        it.resume(gson.fromJson(response.body()!!.charStream(), OAuth::class.java))
+                        it.resume(gson.fromJson(response.body!!.charStream(), OAuth::class.java))
                     }
                 })
 

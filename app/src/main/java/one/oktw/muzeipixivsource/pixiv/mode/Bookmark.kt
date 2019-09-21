@@ -45,7 +45,7 @@ class Bookmark(private val token: String, private val user: Int, private val pri
             .build()
             .let(httpClient::newCall)
             .execute()
-            .body()?.let {
+            .body?.let {
                 GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
                     .fromJson<IllustList>(it.charStream(), IllustList::class.java)
             }

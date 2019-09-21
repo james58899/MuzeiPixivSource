@@ -59,7 +59,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (preference is NumberPickerPreference) {
             NumberPickerPreference.Fragment.newInstance(preference.key).also {
                 it.setTargetFragment(this, 0)
-                it.show(fragmentManager, "androidx.preference.PreferenceFragment.DIALOG")
+                it.show(requireFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG")
             }
         } else {
             super.onDisplayPreferenceDialog(preference)
@@ -69,9 +69,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.prefragment, rootKey)
 
-        initAccountButton(findPreference(KEY_ACCOUNT))
-        initMuzeiButton(findPreference(KEY_MUZEI))
-        initFetchMode(findPreference(KEY_FETCH_MODE))
+        findPreference<Preference>(KEY_ACCOUNT)?.let { initAccountButton(it) }
+        findPreference<Preference>(KEY_MUZEI)?.let { initMuzeiButton(it) }
+        findPreference<Preference>(KEY_FETCH_MODE)?.let { initFetchMode(it) }
     }
 
     override fun onActivityResult(request: Int, result: Int, data: Intent?) {
@@ -132,17 +132,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updateAccountInfo() {
-        val account = findPreference(KEY_ACCOUNT)
+        val account = findPreference<Preference>(KEY_ACCOUNT) ?: return
         val pref = account.sharedPreferences
 
         if (pref.contains(KEY_PIXIV_ACCESS_TOKEN)) {
             account.title = getString(R.string.pref_pixiv_sign_out)
-            findPreference(KEY_FETCH_MODE).isEnabled = true
-            findPreference(KEY_FETCH_FALLBACK).isEnabled = true
+            findPreference<ListPreference>(KEY_FETCH_MODE)?.isEnabled = true
+            findPreference<SwitchPreferenceCompat>(KEY_FETCH_FALLBACK)?.isEnabled = true
         } else {
             account.title = getString(R.string.pref_pixiv_sign_in)
-            findPreference(KEY_FETCH_MODE).isEnabled = false
-            findPreference(KEY_FETCH_FALLBACK).isEnabled = false
+            findPreference<ListPreference>(KEY_FETCH_MODE)?.isEnabled = false
+            findPreference<SwitchPreferenceCompat>(KEY_FETCH_FALLBACK)?.isEnabled = false
         }
 
         account.summary = pref.getString(KEY_PIXIV_USER_NAME, getString(R.string.pref_pixiv_summary))
@@ -151,13 +151,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun updateFetchModePreference(newValue: String? = null) {
         // init some preference
         if (!this::fetchMode.isInitialized)
-            fetchMode = findPreference(KEY_FETCH_MODE) as ListPreference
+            fetchMode = findPreference(KEY_FETCH_MODE)!!
         if (!this::fetchCategory.isInitialized)
-            fetchCategory = findPreference(KEY_FETCH) as PreferenceCategory
+            fetchCategory = findPreference(KEY_FETCH)!!
         if (!this::rankingPreference.isInitialized)
-            rankingPreference = findPreference(KEY_FETCH_MODE_RANKING) as ListPreference
+            rankingPreference = findPreference(KEY_FETCH_MODE_RANKING)!!
         if (!this::bookmarkPreference.isInitialized)
-            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK) as SwitchPreferenceCompat
+            bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK)!!
 
         asList(rankingPreference, bookmarkPreference).forEach { fetchCategory.removePreference(it) }
 

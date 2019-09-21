@@ -99,7 +99,7 @@ class MuzeiProvider : MuzeiArtProvider() {
             .build()
             .let(httpClient::newCall)
             .execute()
-            .body()!!.byteStream()
+            .body!!.byteStream()
     }
 
     override fun getCommands(artwork: Artwork) = mutableListOf(
