@@ -14,6 +14,10 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import java.io.IOException
+import java.math.BigInteger
+import java.security.MessageDigest
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -61,7 +65,7 @@ class PixivOAuth {
         }
 
         private suspend fun sendRequest(data: RequestBody) = suspendCoroutine<OAuth> {
-            val httpClient = OkHttpClient()
+            val httpClient = OkHttpClient().newBuilder().addNetworkInterceptor(OAuthInterceptor()).build()
             val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
 
             Request.Builder()
@@ -77,6 +81,23 @@ class PixivOAuth {
                     }
                 })
 
+        }
+    }
+
+    class OAuthInterceptor : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val timeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.US).format(Date())
+            val hash = BigInteger(1,
+                MessageDigest.getInstance("MD5")
+                    .digest("${timeFormat}28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c".toByteArray())
+            ).toString(16).padStart(32, '0')
+
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Accept-Language", Locale.getDefault().toString())
+                .addHeader("X-Client-Time", timeFormat)
+                .addHeader("X-Client-Hash", hash).build()
+
+            return chain.proceed(newRequest)
         }
     }
 }
