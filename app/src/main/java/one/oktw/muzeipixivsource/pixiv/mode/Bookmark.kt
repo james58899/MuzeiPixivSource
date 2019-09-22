@@ -1,12 +1,10 @@
 package one.oktw.muzeipixivsource.pixiv.mode
 
-import com.google.android.apps.muzei.api.RemoteMuzeiArtSource
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
 import java.util.*
 
 class Bookmark(private val token: String, private val user: Int, private val private: Boolean) {
@@ -19,7 +17,7 @@ class Bookmark(private val token: String, private val user: Int, private val pri
         do {
             // random select private or public bookmark
             val random = if (private) Random().nextBoolean() else false
-            val res = request(if (random) privateUrl else publicUrl) ?: throw RemoteMuzeiArtSource.RetryException()
+            val res = request(if (random) privateUrl else publicUrl)
 
             if (res.nextUrl != null) {
                 res.nextUrl.let { if (random) privateUrl = it else publicUrl = it }
@@ -36,7 +34,7 @@ class Bookmark(private val token: String, private val user: Int, private val pri
         return list
     }
 
-    private fun request(url: String): IllustList? {
+    private fun request(url: String): IllustList {
         val httpClient = OkHttpClient()
 
         return Request.Builder()
@@ -45,9 +43,7 @@ class Bookmark(private val token: String, private val user: Int, private val pri
             .build()
             .let(httpClient::newCall)
             .execute()
-            .body?.let {
-                GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
-                    .fromJson<IllustList>(it.charStream(), IllustList::class.java)
-            }
+            .body!!
+            .let { GSON.fromJson(it.charStream(), IllustList::class.java) }
     }
 }

@@ -16,14 +16,9 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import java.io.IOException
 
-class PixivSignIn : AppCompatActivity(), CoroutineScope {
-    private lateinit var job: Job
-    override val coroutineContext
-        get() = Dispatchers.Main + job
-
+class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispatchers.Main + SupervisorJob()) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
 
         // Set up the login form.
         setContentView(R.layout.activity_pixiv_login)
@@ -37,11 +32,6 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope {
         }
 
         login_button.setOnClickListener { login() }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     private fun login() {

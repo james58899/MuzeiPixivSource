@@ -2,8 +2,6 @@ package one.oktw.muzeipixivsource.pixiv
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
 import okhttp3.*
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_DEVICE_TOKEN
@@ -13,6 +11,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_USER_USERNAME
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
 import java.io.IOException
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -66,7 +65,6 @@ class PixivOAuth {
 
         private suspend fun sendRequest(data: RequestBody) = suspendCoroutine<OAuth> {
             val httpClient = OkHttpClient().newBuilder().addNetworkInterceptor(OAuthInterceptor()).build()
-            val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
 
             Request.Builder()
                 .post(data)
@@ -77,7 +75,7 @@ class PixivOAuth {
                     override fun onFailure(call: Call, e: IOException) = it.resumeWithException(e)
 
                     override fun onResponse(call: Call, response: Response) {
-                        it.resume(gson.fromJson(response.body!!.charStream(), OAuth::class.java))
+                        it.resume(GSON.fromJson(response.body!!.charStream(), OAuth::class.java))
                     }
                 })
 
@@ -87,10 +85,10 @@ class PixivOAuth {
     class OAuthInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val timeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.US).format(Date())
-            val hash = BigInteger(1,
-                MessageDigest.getInstance("MD5")
-                    .digest("${timeFormat}28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c".toByteArray())
-            ).toString(16).padStart(32, '0')
+            val hash = MessageDigest.getInstance("MD5")
+                .digest("${timeFormat}28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c".toByteArray())
+                .let { BigInteger(1, it) }
+                .toString(16).padStart(32, '0')
 
             val newRequest = chain.request().newBuilder()
                 .addHeader("Accept-Language", Locale.getDefault().toString())

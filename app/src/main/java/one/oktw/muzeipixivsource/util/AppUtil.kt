@@ -4,9 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.net.toUri
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 class AppUtil {
     companion object {
+        val GSON: Gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
+
         fun launchOrMarket(context: Context, packageName: String): Intent {
             return if (checkInstalled(context, packageName)) launchFromPackage(context, packageName)!! else viewMarket(
                 packageName
