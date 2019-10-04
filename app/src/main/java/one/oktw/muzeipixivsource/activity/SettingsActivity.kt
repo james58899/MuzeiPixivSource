@@ -1,5 +1,6 @@
 package one.oktw.muzeipixivsource.activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
@@ -30,7 +31,11 @@ class SettingsActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage(R.string.muzei_not_install)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
-                    startActivity(viewMarket(MUZEI_PACKAGE))
+                    try {
+                        startActivity(viewMarket(MUZEI_PACKAGE))
+                    } catch (e: ActivityNotFoundException) {
+                        startActivity(Intent(ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=net.nurik.roman.muzei")))
+                    }
                 }
                 .setNegativeButton(android.R.string.no, null)
                 .setCancelable(false)
