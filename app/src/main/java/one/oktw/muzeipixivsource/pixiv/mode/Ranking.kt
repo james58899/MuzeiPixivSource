@@ -1,11 +1,11 @@
 package one.oktw.muzeipixivsource.pixiv.mode
 
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.*
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
 
 class Ranking(private val token: String, private val category: RankingCategory) {
     fun getImages(number: Int): ArrayList<Illust> {
@@ -28,8 +28,6 @@ class Ranking(private val token: String, private val category: RankingCategory) 
     }
 
     private fun request(url: String): IllustList {
-        val httpClient = OkHttpClient()
-
         return Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $token")

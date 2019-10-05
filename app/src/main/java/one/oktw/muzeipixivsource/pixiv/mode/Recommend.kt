@@ -1,10 +1,10 @@
 package one.oktw.muzeipixivsource.pixiv.mode
 
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
 import java.util.*
 
 class Recommend(private val token: String) {
@@ -24,8 +24,6 @@ class Recommend(private val token: String) {
     }
 
     private fun request(url: String): IllustList {
-        val httpClient = OkHttpClient()
-
         return Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $token")

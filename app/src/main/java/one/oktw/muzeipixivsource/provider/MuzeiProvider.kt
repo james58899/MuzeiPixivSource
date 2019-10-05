@@ -10,7 +10,6 @@ import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
@@ -35,6 +34,7 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
 import org.jsoup.Jsoup
 import java.io.InputStream
 
@@ -43,7 +43,6 @@ class MuzeiProvider : MuzeiArtProvider() {
         private const val COMMAND_FETCH = 1
     }
 
-    private val httpClient = OkHttpClient()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
 

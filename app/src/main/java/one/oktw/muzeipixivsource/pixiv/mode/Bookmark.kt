@@ -1,9 +1,9 @@
 package one.oktw.muzeipixivsource.pixiv.mode
 
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
+import one.oktw.muzeipixivsource.util.AppUtil
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
 import java.util.*
 
@@ -35,13 +35,11 @@ class Bookmark(private val token: String, private val user: Int, private val pri
     }
 
     private fun request(url: String): IllustList {
-        val httpClient = OkHttpClient()
-
         return Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $token")
             .build()
-            .let(httpClient::newCall)
+            .let(AppUtil.httpClient::newCall)
             .execute()
             .body!!
             .let { GSON.fromJson(it.charStream(), IllustList::class.java) }

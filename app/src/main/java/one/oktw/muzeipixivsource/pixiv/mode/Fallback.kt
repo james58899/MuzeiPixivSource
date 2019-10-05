@@ -1,10 +1,10 @@
 package one.oktw.muzeipixivsource.pixiv.mode
 
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
 import java.util.*
 
 class Fallback {
@@ -14,8 +14,6 @@ class Fallback {
         }
 
         private fun request(): IllustList {
-            val httpClient = OkHttpClient()
-
             return Request.Builder()
                 .url("https://app-api.pixiv.net/v1/walkthrough/illusts")
                 .build()
