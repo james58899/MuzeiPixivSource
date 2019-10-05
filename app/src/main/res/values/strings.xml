@@ -54,6 +54,8 @@
     <string name="pref_fetch_bookmark_summary_on">Include private bookmark</string>
     <string name="pref_fetch_bookmark_summary_off">Does not include private bookmark</string>
 
+    <string name="pref_fetch_mirror">Image download mirror</string>
+
     <string name="pref_title_filter">Filter</string>
 
     <string name="pref_filter_size">Minimum resolution</string>

@@ -63,6 +63,10 @@
             android:summaryOff="@string/pref_fetch_bookmark_summary_off"
             android:summaryOn="@string/pref_fetch_bookmark_summary_on"
             android:title="@string/pref_fetch_bookmark" />
+        <EditTextPreference
+            android:key="fetch_mirror"
+            android:title="@string/pref_fetch_mirror"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="filter"

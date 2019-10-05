@@ -10,6 +10,7 @@ import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
@@ -19,6 +20,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RECOMMEND
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_CLEANUP
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_FALLBACK
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MIRROR
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_NUMBER
@@ -92,8 +94,12 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     override fun openFile(artwork: Artwork): InputStream {
+        val mirror = preference.getString(KEY_FETCH_MIRROR, "")
+        val httpClient = if (mirror.isNullOrBlank()) httpClient else OkHttpClient() // Use normal client download image from mirror
+        val uri = artwork.persistentUri!!.let { if (mirror.isNullOrBlank()) it.toString() else it.toString().replace(it.host!!, mirror) }
+
         return Request.Builder()
-            .url(artwork.persistentUri.toString())
+            .url(uri)
             .header("Referer", "https://app-api.pixiv.net/")
             .build()
             .let(httpClient::newCall)
@@ -142,11 +148,7 @@ class MuzeiProvider : MuzeiArtProvider() {
 
             if (it.pageCount > 1) {
                 it.metaPages.forEachIndexed { index, image ->
-                    val imageUrl = if (originImage) {
-                        image.imageUrls.original
-                    } else {
-                        image.imageUrls.large?.replace("/c/600x1200_90", "")
-                    }?.toUri()
+                    val imageUrl = if (originImage) image.imageUrls.original else image.imageUrls.large?.replace("/c/600x1200_90", "")
 
                     Artwork.Builder()
                         .title(it.title)
@@ -154,7 +156,7 @@ class MuzeiProvider : MuzeiArtProvider() {
                         .attribution(Jsoup.parse(it.caption).text())
                         .token("${it.id}_$index")
                         .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
-                        .persistentUri(imageUrl)
+                        .persistentUri(imageUrl?.toUri())
                         .build()
                         .let(artworkList::add)
                 }

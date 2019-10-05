@@ -1,5 +1,6 @@
 package one.oktw.muzeipixivsource.activity.fragment
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -14,7 +15,6 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.provider.MuzeiProvider
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
-import java.util.Arrays.asList
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var fetchCategory: PreferenceCategory
@@ -43,6 +43,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH_MODE_RANKING = "fetch_mode_ranking"
         const val KEY_FETCH_MODE_BOOKMARK = "fetch_mode_bookmark"
         const val KEY_FETCH_RANDOM = "fetch_random"
+        const val KEY_FETCH_MIRROR = "fetch_mirror"
         const val KEY_FILTER_SAFE = "filter_safe"
         const val KEY_FILTER_SIZE = "filter_size"
         const val KEY_FILTER_VIEW = "filter_view"
@@ -123,7 +124,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun onLogin(result: Int, data: Intent?) {
         if (result != RESULT_OK || data == null) return
 
-        data.getParcelableExtra<OAuthResponse>("response").let {
+        data.getParcelableExtra<OAuthResponse>("response")?.let {
             PixivOAuth.save(preferenceManager.sharedPreferences, it)
         }
 
@@ -159,7 +160,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (!this::bookmarkPreference.isInitialized)
             bookmarkPreference = findPreference(KEY_FETCH_MODE_BOOKMARK)!!
 
-        asList(rankingPreference, bookmarkPreference).forEach { fetchCategory.removePreference(it) }
+        listOf(rankingPreference, bookmarkPreference).forEach { fetchCategory.removePreference(it) }
 
         // hide if not login
         if (fetchMode.isEnabled) when (newValue?.toInt() ?: fetchMode.value.toInt()) {
@@ -169,7 +170,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (newValue != null) {
             val context = requireContext()
-            ProviderContract.Artwork.getContentUri(context, MuzeiProvider::class.java)
+
+            ProviderContract.getContentUri(context.packageManager.getProviderInfo(ComponentName(context, MuzeiProvider::class.java), 0).authority)
                 .let { context.contentResolver.delete(it, null, null) }
         }
     }
