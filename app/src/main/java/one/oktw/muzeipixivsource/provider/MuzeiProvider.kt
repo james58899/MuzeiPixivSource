@@ -36,7 +36,7 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
-import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
+import one.oktw.muzeipixivsource.util.AppUtil
 import org.jsoup.Jsoup
 import java.io.InputStream
 
@@ -45,6 +45,7 @@ class MuzeiProvider : MuzeiArtProvider() {
         private const val COMMAND_FETCH = 1
     }
 
+    private val httpClient = OkHttpClient()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
 
@@ -95,7 +96,7 @@ class MuzeiProvider : MuzeiArtProvider() {
 
     override fun openFile(artwork: Artwork): InputStream {
         val mirror = preference.getString(KEY_FETCH_MIRROR, "")
-        val httpClient = if (mirror.isNullOrBlank()) httpClient else OkHttpClient() // Use normal client download image from mirror
+        val httpClient = if (mirror.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
         val uri = artwork.persistentUri!!.let { if (mirror.isNullOrBlank()) it.toString() else it.toString().replace(it.host!!, mirror) }
 
         return Request.Builder()
