@@ -14,6 +14,7 @@ import one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.provider.MuzeiProvider
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.MUZEI_PACKAGE
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -105,7 +106,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun initMuzeiButton(preference: Preference) {
         preference.setOnPreferenceClickListener {
-            startActivity(launchOrMarket(requireContext(), "net.nurik.roman.muzei"))
+            launchOrMarket(requireContext(), MUZEI_PACKAGE)
 
             true
         }

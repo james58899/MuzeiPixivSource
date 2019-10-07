@@ -3,7 +3,7 @@
     <string name="source_title" translatable="false">Pixiv</string>
 
     <!--Activity-->
-    <string name="muzei_not_install">Muzei not installed, install from Play Store?</string>
+    <string name="muzei_not_install_message">This app needs Muzei to function, install it from Play Store?</string>
 
     <!--Toast-->
     <string name="login_fail">Login failed</string>
@@ -88,4 +88,5 @@
     <string name="button_update">Fetch new image</string>
     <string name="pref_fetch_random_summary">Random sorting fetch results</string>
     <string name="pref_fetch_random">Random sort</string>
+    <string name="muzei_not_install_title">Muzei not installed</string>
 </resources>

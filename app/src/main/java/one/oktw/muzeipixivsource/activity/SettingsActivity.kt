@@ -1,22 +1,16 @@
 package one.oktw.muzeipixivsource.activity
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.MUZEI_PACKAGE
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.checkInstalled
-import one.oktw.muzeipixivsource.util.AppUtil.Companion.viewMarket
+import one.oktw.muzeipixivsource.util.AppUtil.Companion.showInstallDialog
 
 class SettingsActivity : AppCompatActivity() {
-    companion object {
-        private const val MUZEI_PACKAGE = "net.nurik.roman.muzei"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,18 +22,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // check muzei installed
         if (!checkInstalled(this, MUZEI_PACKAGE)) {
-            AlertDialog.Builder(this)
-                .setMessage(R.string.muzei_not_install)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    try {
-                        startActivity(viewMarket(MUZEI_PACKAGE))
-                    } catch (e: ActivityNotFoundException) {
-                        startActivity(Intent(ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=net.nurik.roman.muzei")))
-                    }
-                }
-                .setNegativeButton(android.R.string.no, null)
-                .setCancelable(false)
-                .show()
+            showInstallDialog(this, MUZEI_PACKAGE)
         }
 
         // Only create new fragment on first create activity
