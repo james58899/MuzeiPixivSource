@@ -41,6 +41,7 @@ import one.oktw.muzeipixivsource.util.AppUtil
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
+import java.util.concurrent.TimeUnit.SECONDS
 
 class MuzeiProvider : MuzeiArtProvider() {
     companion object {
@@ -88,7 +89,7 @@ class MuzeiProvider : MuzeiArtProvider() {
             try {
                 if (fallback) pixiv.getFallback().let(::publish) else throw e1
             } catch (e2: Exception) {
-                Log.e("fetch", "fetch update fallback error", e2)
+                if (fallback) Log.e("fetch", "fetch update fallback error", e2)
 
                 if (e1 != e2) Crashlytics.logException(e2)
                 throw e2
@@ -100,7 +101,10 @@ class MuzeiProvider : MuzeiArtProvider() {
         val mirror = preference.getString(KEY_FETCH_MIRROR, "")
         val httpClient = if (mirror.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
         val uri = artwork.persistentUri!!.let { if (mirror.isNullOrBlank()) it.toString() else it.toString().replace(it.host!!, mirror) }
-        val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong())
+        val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong()).apply {
+            source.timeout().timeout(10, SECONDS)
+            sink.timeout().timeout(10, SECONDS)
+        }
 
         Request.Builder()
             .url(uri)
@@ -108,12 +112,10 @@ class MuzeiProvider : MuzeiArtProvider() {
             .build()
             .let(httpClient::newCall)
             .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    stream.sink.close()
-                }
+                override fun onFailure(call: Call, e: IOException) {}
 
                 override fun onResponse(call: Call, response: Response) {
-                    response.body?.source()?.use { source -> stream.sink.use { source.readAll(it) } } ?: stream.sink.close()
+                    response.body?.source()?.use { source -> stream.sink.use { source.readAll(it) } }
                 }
             })
 
