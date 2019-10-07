@@ -9,8 +9,8 @@ android {
         applicationId "one.oktw.muzeipixivsource"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 33
-        versionName "2.4.0"
+        versionCode 35
+        versionName "2.5.0"
     }
     buildTypes {
         release {
