@@ -10,8 +10,9 @@ import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
+import okio.Pipe
+import okio.buffer
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_BOOKMARK
@@ -38,6 +39,7 @@ import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.util.AppUtil
 import org.jsoup.Jsoup
+import java.io.IOException
 import java.io.InputStream
 
 class MuzeiProvider : MuzeiArtProvider() {
@@ -98,14 +100,24 @@ class MuzeiProvider : MuzeiArtProvider() {
         val mirror = preference.getString(KEY_FETCH_MIRROR, "")
         val httpClient = if (mirror.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
         val uri = artwork.persistentUri!!.let { if (mirror.isNullOrBlank()) it.toString() else it.toString().replace(it.host!!, mirror) }
+        val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong())
 
-        return Request.Builder()
+        Request.Builder()
             .url(uri)
             .header("Referer", "https://app-api.pixiv.net/")
             .build()
             .let(httpClient::newCall)
-            .execute()
-            .body!!.byteStream()
+            .enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    stream.sink.close()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    response.body?.source()?.use { source -> stream.sink.use { source.readAll(it) } } ?: stream.sink.close()
+                }
+            })
+
+        return stream.source.buffer().inputStream()
     }
 
     override fun getCommands(artwork: Artwork) = mutableListOf(
