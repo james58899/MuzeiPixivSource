@@ -46,6 +46,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FETCH_RANDOM = "fetch_random"
         const val KEY_FETCH_MIRROR = "fetch_mirror"
         const val KEY_FILTER_SAFE = "filter_safe"
+        const val KEY_FILTER_ILLUST = "filter_illust"
         const val KEY_FILTER_SIZE = "filter_size"
         const val KEY_FILTER_VIEW = "filter_view"
         const val KEY_FILTER_BOOKMARK = "filter_bookmark"

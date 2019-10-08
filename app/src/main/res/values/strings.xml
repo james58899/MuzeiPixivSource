@@ -89,4 +89,6 @@
     <string name="pref_fetch_random_summary">Random sorting fetch results</string>
     <string name="pref_fetch_random">Random sort</string>
     <string name="muzei_not_install_title">Muzei not installed</string>
+    <string name="pref_filter_illust_summary">Will only fetch illust</string>
+    <string name="pref_filter_illust">Filter illust</string>
 </resources>

@@ -28,6 +28,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_ORIGIN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_RANDOM
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_BOOKMARK
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_ILLUST
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SAFE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SIZE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_VIEW
@@ -37,6 +38,7 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
+import one.oktw.muzeipixivsource.pixiv.model.IllustTypes.ILLUST
 import one.oktw.muzeipixivsource.util.AppUtil
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -148,6 +150,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     private fun publish(list: ArrayList<Illust>) {
         val cleanHistory = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
+        val filterIllust = preference.getBoolean(KEY_FILTER_ILLUST, true)
         val random = preference.getBoolean(KEY_FETCH_RANDOM, false)
         val filterSize = preference.getInt(KEY_FILTER_SIZE, 0)
         val originImage = if (filterSize > 1200) true else preference.getBoolean(KEY_FETCH_ORIGIN, false)
@@ -158,6 +161,7 @@ class MuzeiProvider : MuzeiArtProvider() {
 
         list.forEach {
             if (filterNSFW && it.sanityLevel >= 4) return@forEach
+            if (filterIllust && it.type != ILLUST) return@forEach
             if (filterSize > it.height && filterSize > it.width) return@forEach
             if (minView > it.totalView || minBookmark > it.totalBookmarks) return@forEach
 

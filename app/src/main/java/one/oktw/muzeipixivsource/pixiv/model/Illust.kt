@@ -8,6 +8,7 @@ data class Illust(
     val user: User,
     val tags: ArrayList<Tag>,
     val tools: ArrayList<String>,
+    val type: IllustTypes,
 //    val createDate: Date,
     val pageCount: Int,
     val width: Int,
@@ -16,8 +17,8 @@ data class Illust(
     val metaSinglePage: IllustSinglePage,
     val metaPages: ArrayList<IllustPage>,
     val totalView: Int,
-    val totalBookmarks: Int,
+    val totalBookmarks: Int
 //    val isBookmarked: Boolean,
-    val visible: Boolean
+//    val visible: Boolean,
 //    val isMuted: Boolean
 )

@@ -77,6 +77,11 @@
             android:summaryOff="@string/pref_filter_safe_summary_off"
             android:summaryOn="@string/pref_filter_safe_summary_on"
             android:title="@string/pref_filter_safe" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="filter_illust"
+            android:summary="@string/pref_filter_illust_summary"
+            android:title="@string/pref_filter_illust" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
             android:defaultValue="1000"
             android:key="filter_size"
