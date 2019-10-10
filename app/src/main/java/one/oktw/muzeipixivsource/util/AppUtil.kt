@@ -33,9 +33,7 @@ class AppUtil {
                     .post(true)
                     .bootstrapDnsHosts(
                         InetAddress.getByName("104.16.249.249"),
-                        InetAddress.getByName("104.16.248.249"),
-                        InetAddress.getByName("1.1.1.1"),
-                        InetAddress.getByName("1.0.0.1")
+                        InetAddress.getByName("104.16.248.249")
                     )
                     .build()
             )
