@@ -2,6 +2,7 @@ package one.oktw.muzeipixivsource.hack
 
 import java.net.InetAddress
 import java.net.Socket
+import java.net.UnknownHostException
 import javax.net.ssl.SSLSocketFactory
 
 class DisableSNISSLSocketFactory : SSLSocketFactory() {
@@ -11,6 +12,7 @@ class DisableSNISSLSocketFactory : SSLSocketFactory() {
 
     override fun createSocket(socket: Socket, host: String, port: Int, autoClose: Boolean): Socket {
         if (autoClose) socket.close()
+        if (socket.inetAddress == null) throw UnknownHostException(host)
         return createSocket(socket.inetAddress, port)
     }
 
