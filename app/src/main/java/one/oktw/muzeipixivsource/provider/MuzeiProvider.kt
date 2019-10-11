@@ -1,7 +1,10 @@
 package one.oktw.muzeipixivsource.provider
 
+import android.content.ClipData
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
@@ -43,11 +46,15 @@ import one.oktw.muzeipixivsource.util.AppUtil
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit.SECONDS
 
 class MuzeiProvider : MuzeiArtProvider() {
     companion object {
         private const val COMMAND_FETCH = 1
+        private const val COMMAND_OPEN = 2
+        private const val COMMAND_SHARE = 3
+        private const val COMMAND_DOWNLOAD = 4
     }
 
     private val httpClient = OkHttpClient()
@@ -124,13 +131,43 @@ class MuzeiProvider : MuzeiArtProvider() {
         return stream.source.buffer().inputStream()
     }
 
-    override fun getCommands(artwork: Artwork) = mutableListOf(
-        UserCommand(COMMAND_FETCH, context?.getString(R.string.button_update))
-    )
+    override fun getCommands(artwork: Artwork): MutableList<UserCommand> {
+        return mutableListOf(
+//            UserCommand(COMMAND_FETCH, context!!.getString(R.string.button_update)), // Muzei now include this function
+            UserCommand(COMMAND_OPEN, context!!.getString(R.string.button_open)),
+            UserCommand(COMMAND_SHARE, context!!.getString(R.string.button_share))
+//            UserCommand(COMMAND_DOWNLOAD, context!!.getString(R.string.button_download))
+        )
+    }
 
-    override fun onCommand(artwork: Artwork, id: Int) = when (id) {
-        COMMAND_FETCH -> onLoadRequested(false)
-        else -> Unit
+    override fun onCommand(artwork: Artwork, id: Int) {
+        when (id) {
+            COMMAND_FETCH -> onLoadRequested(false)
+            COMMAND_OPEN -> context!!.startActivity(Intent(Intent.ACTION_VIEW, artwork.webUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            COMMAND_SHARE -> {
+                val cacheFile = getShareCacheDir()?.resolve(artwork.persistentUri!!.pathSegments.last()) ?: return
+
+                if (!cacheFile.exists()) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        Files.copy(artwork.data.toPath(), cacheFile.toPath())
+                    } else {
+                        cacheFile.outputStream().use { file -> artwork.data.inputStream().use { it.copyTo(file) } }
+                    }
+                }
+
+                val uri = FileProvider.getUriForFile(context!!, "one.oktw.muzeipixivsource.share", cacheFile)
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    putExtra(Intent.EXTRA_TEXT, getShareText(artwork))
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    clipData = ClipData(artwork.title, arrayOf("image/*"), ClipData.Item(uri))
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    type = "image/*"
+                }
+                context!!.startActivity(Intent.createChooser(shareIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+            COMMAND_DOWNLOAD -> TODO()
+            else -> Unit
+        }
     }
 
     private suspend fun updateToken() {
@@ -167,7 +204,11 @@ class MuzeiProvider : MuzeiArtProvider() {
 
             if (it.pageCount > 1) {
                 it.metaPages.forEachIndexed { index, image ->
-                    val imageUrl = if (originImage) image.imageUrls.original else image.imageUrls.large?.replace("/c/600x1200_90", "")
+                    val imageUrl = if (originImage) {
+                        image.imageUrls.original
+                    } else {
+                        image.imageUrls.large?.replace("/c/600x1200_90", "")
+                    } ?: return@forEachIndexed
 
                     Artwork.Builder()
                         .title(it.title)
@@ -175,7 +216,7 @@ class MuzeiProvider : MuzeiArtProvider() {
                         .attribution(Jsoup.parse(it.caption).text())
                         .token("${it.id}_$index")
                         .webUri("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=${it.id}".toUri())
-                        .persistentUri(imageUrl?.toUri())
+                        .persistentUri(imageUrl.toUri())
                         .build()
                         .let(artworkList::add)
                 }
@@ -184,7 +225,7 @@ class MuzeiProvider : MuzeiArtProvider() {
                     it.metaSinglePage.original_image_url
                 } else {
                     it.image_urls.large?.replace("/c/600x1200_90", "")
-                }?.toUri()
+                }?.toUri() ?: return@forEach
 
                 Artwork.Builder()
                     .title(it.title)
@@ -203,4 +244,8 @@ class MuzeiProvider : MuzeiArtProvider() {
 
         artworkList.forEach { addArtwork(it) }
     }
+
+    private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
+
+    private fun getShareCacheDir() = context?.cacheDir?.resolve("share")?.apply { mkdir() }?.apply { deleteOnExit() }
 }
