@@ -242,7 +242,7 @@ class MuzeiProvider : MuzeiArtProvider() {
         if (cleanHistory) delete(contentUri, null, null)
         if (random) artworkList.shuffle()
 
-        artworkList.forEach { addArtwork(it) }
+        addArtwork(artworkList)
     }
 
     private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
