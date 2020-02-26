@@ -55,7 +55,7 @@
     <string name="pref_fetch_cleanup">清理歷史</string>
     <string name="pref_fetch_fallback_summary">抓取失敗時嘗試備用來源 (示範來源)</string>
     <string name="pref_fetch_fallback">備用來源</string>
-    <string name="pref_filter_size">最小解析度</string>
+    <string name="pref_filter_size">最小解像度</string>
     <string name="pref_filter_size_summary">排除過小的圖片</string>
     <string name="button_update">抓取新圖片</string>
     <string name="pref_fetch_random_summary">隨機排序抓取結果</string>
