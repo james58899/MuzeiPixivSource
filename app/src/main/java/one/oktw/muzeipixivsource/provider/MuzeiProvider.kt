@@ -9,11 +9,11 @@ import android.webkit.URLUtil
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
-import com.crashlytics.android.Crashlytics
 import com.google.android.apps.muzei.api.UserCommand
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okio.Pipe
@@ -60,6 +60,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     private val httpClient = OkHttpClient()
+    private val crashlytics = FirebaseCrashlytics.getInstance()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
 
@@ -95,14 +96,14 @@ class MuzeiProvider : MuzeiArtProvider() {
         } catch (e1: Exception) {
             // TODO better except handle
             Log.e("fetch", "fetch update error: ${e1.printStackTrace()}", e1)
-            Crashlytics.logException(e1)
+            crashlytics.recordException(e1)
 
             try {
                 if (fallback) pixiv.getFallback().let(::publish) else throw e1
             } catch (e2: Exception) {
                 if (fallback) Log.e("fetch", "fetch update fallback error", e2)
 
-                if (e1 != e2) Crashlytics.logException(e2)
+                if (e1 != e2) crashlytics.recordException(e2)
                 throw e2
             }
         }
@@ -184,7 +185,7 @@ class MuzeiProvider : MuzeiArtProvider() {
             ).response?.let { PixivOAuth.save(preference, it) }
         } catch (e: Exception) {
             Log.e("update_token", "update token error", e)
-            Crashlytics.logException(e)
+            crashlytics.recordException(e)
         }
     }
 
