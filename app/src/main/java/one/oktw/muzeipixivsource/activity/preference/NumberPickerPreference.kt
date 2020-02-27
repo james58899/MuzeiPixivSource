@@ -5,11 +5,11 @@ import android.content.res.TypedArray
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import android.preference.Preference
 import android.util.AttributeSet
 import android.view.View
 import android.widget.NumberPicker
 import androidx.preference.DialogPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceDialogFragmentCompat
 import one.oktw.muzeipixivsource.R
 
