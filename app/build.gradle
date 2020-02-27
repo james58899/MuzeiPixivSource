@@ -7,7 +7,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "one.oktw.muzeipixivsource"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 42
         versionName "2.8.3"
