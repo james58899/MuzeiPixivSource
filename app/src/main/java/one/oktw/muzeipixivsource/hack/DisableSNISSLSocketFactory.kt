@@ -11,9 +11,10 @@ class DisableSNISSLSocketFactory : SSLSocketFactory() {
     override fun getDefaultCipherSuites(): Array<String> = defaultFactory.defaultCipherSuites
 
     override fun createSocket(socket: Socket, host: String, port: Int, autoClose: Boolean): Socket {
+        val address = socket.inetAddress
         if (autoClose) socket.close()
-        if (socket.inetAddress == null) throw UnknownHostException(host)
-        return createSocket(socket.inetAddress, port)
+        if (address == null) throw UnknownHostException(host)
+        return createSocket(address, port)
     }
 
     override fun createSocket(host: String, port: Int): Socket = defaultFactory.createSocket(host, port)
