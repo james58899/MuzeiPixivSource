@@ -3,7 +3,9 @@ package one.oktw.muzeipixivsource.provider
 import android.content.ClipData
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
+import android.webkit.URLUtil
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -92,7 +94,7 @@ class MuzeiProvider : MuzeiArtProvider() {
             }
         } catch (e1: Exception) {
             // TODO better except handle
-            Log.e("fetch", "fetch update error", e1)
+            Log.e("fetch", "fetch update error: ${e1.printStackTrace()}", e1)
             Crashlytics.logException(e1)
 
             try {
@@ -107,16 +109,19 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     override fun openFile(artwork: Artwork): InputStream {
-        val mirror = preference.getString(KEY_FETCH_MIRROR, "")
-        val httpClient = if (mirror.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
-        val uri = artwork.persistentUri!!.let { if (mirror.isNullOrBlank()) it.toString() else it.toString().replace(it.host!!, mirror) }
+        val mirror = preference.getString(KEY_FETCH_MIRROR, "")!!
+            .let { if (it.isBlank() || URLUtil.isNetworkUrl(it)) it else "https://$it" }
+            .let(Uri::parse)
+        val uri = artwork.persistentUri!!
+            .let { if (mirror.authority.isNullOrBlank()) it else it.buildUpon().authority(mirror.authority).build() }
+        val httpClient = if (mirror.authority.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
         val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong()).apply {
             source.timeout().timeout(10, SECONDS)
             sink.timeout().timeout(10, SECONDS)
         }
 
         Request.Builder()
-            .url(uri)
+            .url(uri.toString())
             .header("Referer", "https://app-api.pixiv.net/")
             .build()
             .let(httpClient::newCall)
@@ -133,7 +138,6 @@ class MuzeiProvider : MuzeiArtProvider() {
 
     override fun getCommands(artwork: Artwork): MutableList<UserCommand> {
         return mutableListOf(
-//            UserCommand(COMMAND_FETCH, context!!.getString(R.string.button_update)), // Muzei now include this function
             UserCommand(COMMAND_OPEN, context!!.getString(R.string.button_open)),
             UserCommand(COMMAND_SHARE, context!!.getString(R.string.button_share))
 //            UserCommand(COMMAND_DOWNLOAD, context!!.getString(R.string.button_download))
