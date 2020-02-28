@@ -5,7 +5,7 @@ import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.*
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
+import one.oktw.muzeipixivsource.util.HttpUtils.apiHttpClient
 
 class Ranking(private val token: String, private val category: RankingCategory) {
     fun getImages(number: Int): ArrayList<Illust> {
@@ -32,7 +32,7 @@ class Ranking(private val token: String, private val category: RankingCategory) 
             .url(url)
             .header("Authorization", "Bearer $token")
             .build()
-            .let(httpClient::newCall)
+            .let(apiHttpClient::newCall)
             .execute()
             .body!!
             .let { GSON.fromJson(it.charStream(), IllustList::class.java) }

@@ -15,7 +15,10 @@ import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.runBlocking
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import okio.Pipe
 import okio.buffer
 import one.oktw.muzeipixivsource.R
@@ -44,7 +47,7 @@ import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustTypes.ILLUST
-import one.oktw.muzeipixivsource.util.AppUtil
+import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
@@ -59,7 +62,6 @@ class MuzeiProvider : MuzeiArtProvider() {
         private const val COMMAND_DOWNLOAD = 4
     }
 
-    private val httpClient = OkHttpClient()
     private val crashlytics = FirebaseCrashlytics.getInstance()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
@@ -115,7 +117,6 @@ class MuzeiProvider : MuzeiArtProvider() {
             .let(Uri::parse)
         val uri = artwork.persistentUri!!
             .let { if (mirror.authority.isNullOrBlank()) it else it.buildUpon().authority(mirror.authority).build() }
-        val httpClient = if (mirror.authority.isNullOrBlank()) AppUtil.httpClient else httpClient // Use normal client download image from mirror
         val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong()).apply {
             source.timeout().timeout(10, SECONDS)
             sink.timeout().timeout(10, SECONDS)

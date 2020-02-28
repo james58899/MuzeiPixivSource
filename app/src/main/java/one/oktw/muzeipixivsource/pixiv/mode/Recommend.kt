@@ -4,7 +4,7 @@ import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import one.oktw.muzeipixivsource.util.AppUtil.Companion.httpClient
+import one.oktw.muzeipixivsource.util.HttpUtils.apiHttpClient
 import java.util.*
 
 class Recommend(private val token: String) {
@@ -28,7 +28,7 @@ class Recommend(private val token: String) {
             .url(url)
             .header("Authorization", "Bearer $token")
             .build()
-            .let(httpClient::newCall)
+            .let(apiHttpClient::newCall)
             .execute()
             .body!!
             .let { GSON.fromJson(it.charStream(), IllustList::class.java) }
