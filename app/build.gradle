@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.android.apps.muzei:muzei-api:3.2.0'
-    implementation 'org.jsoup:jsoup:1.12.2'
+    implementation 'org.jsoup:jsoup:1.13.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
