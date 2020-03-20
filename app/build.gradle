@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
     compileSdkVersion 29
@@ -53,11 +55,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-perf'
     implementation 'com.google.android.apps.muzei:muzei-api:3.2.0'
     implementation 'org.jsoup:jsoup:1.13.1'
 }
-
-apply plugin: 'com.google.gms.google-services'
 
 android.applicationVariants.all { variant ->
     variant.outputs.all {
