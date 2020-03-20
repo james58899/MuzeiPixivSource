@@ -51,7 +51,6 @@ import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit.SECONDS
 
 class MuzeiProvider : MuzeiArtProvider() {
@@ -151,25 +150,19 @@ class MuzeiProvider : MuzeiArtProvider() {
             COMMAND_FETCH -> onLoadRequested(false)
             COMMAND_OPEN -> context!!.startActivity(Intent(Intent.ACTION_VIEW, artwork.webUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             COMMAND_SHARE -> {
-                val cacheFile = getShareCacheDir()?.resolve(artwork.persistentUri!!.pathSegments.last()) ?: return
+                val cacheFile = artwork.persistentUri?.pathSegments?.last()?.let { getShareCacheDir().resolve(it) } ?: return
+                if (!cacheFile.exists()) artwork.data.copyTo(cacheFile)
 
-                if (!cacheFile.exists()) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        Files.copy(artwork.data.toPath(), cacheFile.toPath())
-                    } else {
-                        cacheFile.outputStream().use { file -> artwork.data.inputStream().use { it.copyTo(file) } }
-                    }
-                }
-
-                val uri = FileProvider.getUriForFile(context!!, "one.oktw.muzeipixivsource.share", cacheFile)
-                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                    putExtra(Intent.EXTRA_TEXT, getShareText(artwork))
+                Intent(Intent.ACTION_SEND).apply {
+                    val uri = FileProvider.getUriForFile(context!!, "one.oktw.muzeipixivsource.share", cacheFile)
+                    putExtra(Intent.EXTRA_TEXT, "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}")
                     putExtra(Intent.EXTRA_STREAM, uri)
                     clipData = ClipData(artwork.title, arrayOf("image/*"), ClipData.Item(uri))
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                     type = "image/*"
+                }.let {
+                    context!!.startActivity(Intent.createChooser(it, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
-                context!!.startActivity(Intent.createChooser(shareIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             COMMAND_DOWNLOAD -> TODO()
             else -> Unit
@@ -251,7 +244,5 @@ class MuzeiProvider : MuzeiArtProvider() {
         addArtwork(artworkList)
     }
 
-    private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
-
-    private fun getShareCacheDir() = context?.cacheDir?.resolve("share")?.apply { mkdir() }?.apply { deleteOnExit() }
+    private fun getShareCacheDir() = context!!.cacheDir.resolve("share").apply { mkdir() }.apply { deleteOnExit() }
 }
