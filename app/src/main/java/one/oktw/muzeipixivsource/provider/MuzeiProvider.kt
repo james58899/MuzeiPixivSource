@@ -1,12 +1,13 @@
 package one.oktw.muzeipixivsource.provider
 
-import android.content.ClipData
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
 import android.webkit.URLUtil
-import androidx.core.content.FileProvider
+import androidx.core.app.RemoteActionCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.apps.muzei.api.UserCommand
@@ -47,6 +48,9 @@ import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustTypes.ILLUST
+import one.oktw.muzeipixivsource.provider.Commands.COMMAND_OPEN
+import one.oktw.muzeipixivsource.provider.Commands.COMMAND_SHARE
+import one.oktw.muzeipixivsource.service.CommandHandler
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -54,13 +58,6 @@ import java.io.InputStream
 import java.util.concurrent.TimeUnit.SECONDS
 
 class MuzeiProvider : MuzeiArtProvider() {
-    companion object {
-        private const val COMMAND_FETCH = 1
-        private const val COMMAND_OPEN = 2
-        private const val COMMAND_SHARE = 3
-        private const val COMMAND_DOWNLOAD = 4
-    }
-
     private val crashlytics = FirebaseCrashlytics.getInstance()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
@@ -137,35 +134,70 @@ class MuzeiProvider : MuzeiArtProvider() {
         return stream.source.buffer().inputStream()
     }
 
+    // New version command dart
+    override fun getCommandActions(artwork: Artwork): List<RemoteActionCompat> {
+        val context = context!!
+        return listOf(
+            RemoteActionCompat(
+                IconCompat.createWithResource(context, R.drawable.ic_open),
+                context.getString(R.string.button_open),
+                artwork.title ?: "",
+                PendingIntent.getBroadcast(
+                    context,
+                    artwork.id.toInt(),
+                    Intent(context, CommandHandler::class.java)
+                        .setAction("open")
+                        .putExtra(CommandHandler.INTENT_COMMAND, COMMAND_OPEN)
+                        .putExtra(CommandHandler.INTENT_OPEN_URI, artwork.webUri),
+                    0
+                )
+            ).apply { setShouldShowIcon(false) },
+            RemoteActionCompat(
+                IconCompat.createWithResource(context, R.drawable.ic_share),
+                context.getString(R.string.button_share),
+                artwork.title ?: "",
+                PendingIntent.getBroadcast(
+                    context,
+                    artwork.id.toInt(),
+                    Intent(context, CommandHandler::class.java)
+                        .setAction("share")
+                        .putExtra(CommandHandler.INTENT_COMMAND, COMMAND_SHARE)
+                        .putExtra(CommandHandler.INTENT_SHARE_TITLE, artwork.title)
+                        .putExtra(CommandHandler.INTENT_SHARE_TEXT, getShareText(artwork))
+                        .putExtra(CommandHandler.INTENT_SHARE_FILENAME, artwork.persistentUri!!.pathSegments.last())
+                        .putExtra(CommandHandler.INTENT_SHARE_CACHE_FILE, artwork.data),
+                    0
+                )
+            )
+            // TODO save image
+//            RemoteActionCompat(
+//                IconCompat.createWithResource(context, R.drawable.ic_save),
+//                context.getString(R.string.button_save),
+//                artwork.title ?: "",
+//                PendingIntent.getBroadcast(
+//                    context,
+//                    artwork.id.toInt(),
+//                    Intent(context, CommandHandler::class.java)
+//                        .setAction("save"),
+//                    0
+//                )
+//            )
+        )
+    }
+
     override fun getCommands(artwork: Artwork): MutableList<UserCommand> {
         return mutableListOf(
-            UserCommand(COMMAND_OPEN, context!!.getString(R.string.button_open)),
-            UserCommand(COMMAND_SHARE, context!!.getString(R.string.button_share))
-//            UserCommand(COMMAND_DOWNLOAD, context!!.getString(R.string.button_download))
+            UserCommand(COMMAND_OPEN.code, context!!.getString(R.string.button_open)),
+            UserCommand(COMMAND_SHARE.code, context!!.getString(R.string.button_share))
+//            UserCommand(COMMAND_DOWNLOAD.code, context!!.getString(R.string.button_download))
         )
     }
 
     override fun onCommand(artwork: Artwork, id: Int) {
         when (id) {
-            COMMAND_FETCH -> onLoadRequested(false)
-            COMMAND_OPEN -> context!!.startActivity(Intent(Intent.ACTION_VIEW, artwork.webUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            COMMAND_SHARE -> {
-                val cacheFile = artwork.persistentUri?.pathSegments?.last()?.let { getShareCacheDir().resolve(it) } ?: return
-                if (!cacheFile.exists()) artwork.data.copyTo(cacheFile)
-
-                Intent(Intent.ACTION_SEND).apply {
-                    val uri = FileProvider.getUriForFile(context!!, "one.oktw.muzeipixivsource.share", cacheFile)
-                    putExtra(Intent.EXTRA_TEXT, "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}")
-                    putExtra(Intent.EXTRA_STREAM, uri)
-                    clipData = ClipData(artwork.title, arrayOf("image/*"), ClipData.Item(uri))
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    type = "image/*"
-                }.let {
-                    context!!.startActivity(Intent.createChooser(it, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                }
-            }
-            COMMAND_DOWNLOAD -> TODO()
-            else -> Unit
+            COMMAND_OPEN.code -> getCommandActions(artwork)[0].actionIntent.send()
+            COMMAND_SHARE.code -> getCommandActions(artwork)[1].actionIntent.send()
+//            COMMAND_DOWNLOAD.code -> getCommandActions(artwork)[2].actionIntent.send()
         }
     }
 
@@ -245,4 +277,6 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     private fun getShareCacheDir() = context!!.cacheDir.resolve("share").apply { mkdir() }.apply { deleteOnExit() }
+
+    private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
 }

@@ -93,5 +93,5 @@
     <string name="pref_filter_illust">Filter illust</string>
     <string name="button_open">Open</string>
     <string name="button_share">Share</string>
-    <string name="button_download">Download</string>
+    <string name="button_save">Download</string>
 </resources>
