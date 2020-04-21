@@ -62,7 +62,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (preference is NumberPickerPreference) {
             NumberPickerPreference.Fragment.newInstance(preference.key).also {
                 it.setTargetFragment(this, 0)
-                it.show(requireFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG")
+                it.show(parentFragmentManager, "androidx.preference.PreferenceFragment.DIALOG")
             }
         } else {
             super.onDisplayPreferenceDialog(preference)
