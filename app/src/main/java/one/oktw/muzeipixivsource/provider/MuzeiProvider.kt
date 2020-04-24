@@ -95,13 +95,17 @@ class MuzeiProvider : MuzeiArtProvider() {
             // TODO better except handle
             Log.e("fetch", "fetch update error: ${e1.printStackTrace()}", e1)
             crashlytics.recordException(e1)
+            if (e1.suppressed.isNotEmpty()) e1.suppressed.forEach(crashlytics::recordException)
 
+            if (!fallback) throw e1
             try {
-                if (fallback) pixiv.getFallback().let(::publish) else throw e1
+                pixiv.getFallback().let(::publish)
             } catch (e2: Exception) {
-                if (fallback) Log.e("fetch", "fetch update fallback error", e2)
+                Log.e("fetch", "fetch update fallback error", e2)
 
-                if (e1 != e2) crashlytics.recordException(e2)
+                crashlytics.recordException(e2)
+                if (e1.suppressed.isNotEmpty()) e1.suppressed.forEach(crashlytics::recordException)
+
                 throw e2
             }
         }
