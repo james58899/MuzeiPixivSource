@@ -280,7 +280,5 @@ class MuzeiProvider : MuzeiArtProvider() {
         addArtwork(artworkList)
     }
 
-    private fun getShareCacheDir() = context!!.cacheDir.resolve("share").apply { mkdir() }.apply { deleteOnExit() }
-
     private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
 }
