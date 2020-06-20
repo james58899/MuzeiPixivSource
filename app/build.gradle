@@ -14,6 +14,11 @@ android {
         versionCode 45
         versionName "2.8.6"
     }
+
+    buildFeatures {
+        compose true
+    }
+
     buildTypes {
         release {
             shrinkResources = true
@@ -35,12 +40,11 @@ android {
     lintOptions {
         check 'Interoperability'
     }
-    viewBinding.enabled = true
 }
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.material:material:1.1.0'
@@ -51,12 +55,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps'
     implementation 'org.conscrypt:conscrypt-android:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation platform('com.google.firebase:firebase-bom:25.4.0')
+    implementation platform('com.google.firebase:firebase-bom:25.5.0')
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf'
-    implementation 'com.github.romannurik:muzei:v3.4.0-alpha01'
+    implementation "com.google.android.apps.muzei:muzei-api:3.4.0-alpha02"
     implementation 'org.jsoup:jsoup:1.13.1'
 }
 
