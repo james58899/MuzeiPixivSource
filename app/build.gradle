@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf'
-    implementation "com.google.android.apps.muzei:muzei-api:3.4.0-alpha02"
+    implementation "com.google.android.apps.muzei:muzei-api:3.4.0"
     implementation 'org.jsoup:jsoup:1.13.1'
 }
 
