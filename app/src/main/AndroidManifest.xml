@@ -34,13 +34,6 @@
             android:name=".activity.PixivSignIn"
             android:label="@string/title_activity_pixiv_login" />
 
-        <service
-            android:name=".service.CloudMessage"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
         <receiver android:name=".service.CommandHandler" />
 
         <provider
