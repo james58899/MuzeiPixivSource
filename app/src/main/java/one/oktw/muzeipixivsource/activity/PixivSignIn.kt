@@ -91,7 +91,7 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
                 login_button.isEnabled = true
 
                 // TODO show error message
-                Snackbar.make(login_layout, R.string.login_fail, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(login_layout, getString(R.string.login_fail) + "\n${login.errors?.system?.message}", Snackbar.LENGTH_LONG).show()
             }
         }
     }
