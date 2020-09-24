@@ -12,7 +12,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import one.oktw.muzeipixivsource.util.HttpUtils.apiHttpClient
+import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import java.io.IOException
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -65,7 +65,7 @@ class PixivOAuth {
         }
 
         private suspend fun sendRequest(data: RequestBody) = suspendCoroutine<OAuth> {
-            val httpClient = apiHttpClient.newBuilder().addNetworkInterceptor(OAuthInterceptor()).build()
+            val httpClient = httpClient.newBuilder().addNetworkInterceptor(OAuthInterceptor()).build()
 
             Request.Builder()
                 .post(data)
