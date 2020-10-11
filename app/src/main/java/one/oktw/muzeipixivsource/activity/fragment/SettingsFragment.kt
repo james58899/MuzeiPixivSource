@@ -95,7 +95,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         logout()
                     }
-                    .setNegativeButton(android.R.string.no, null)
+                    .setNegativeButton(android.R.string.cancel, null)
                     .show()
             } else {
                 startActivityForResult(Intent(activity, PixivSignIn::class.java), PIXIV_LOGIN)

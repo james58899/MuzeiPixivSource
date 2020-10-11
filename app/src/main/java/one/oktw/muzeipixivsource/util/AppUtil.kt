@@ -30,14 +30,14 @@ class AppUtil {
             AlertDialog.Builder(context)
                 .setTitle(R.string.muzei_not_install_title)
                 .setMessage(R.string.muzei_not_install_message)
-                .setPositiveButton(android.R.string.yes) { _, _ ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     try {
                         context.startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()))
                     } catch (e: ActivityNotFoundException) {
                         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                     }
                 }
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(false)
                 .show()
         }
