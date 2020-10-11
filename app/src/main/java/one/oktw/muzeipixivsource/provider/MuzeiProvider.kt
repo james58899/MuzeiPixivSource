@@ -220,6 +220,7 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     private fun publish(list: ArrayList<Illust>) {
+        val number = preference.getInt(KEY_FETCH_NUMBER, 30)
         val cleanHistory = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)
         val filterIllust = preference.getBoolean(KEY_FILTER_ILLUST, true)
@@ -277,7 +278,7 @@ class MuzeiProvider : MuzeiArtProvider() {
         if (cleanHistory) delete(contentUri, null, null)
         if (random) artworkList.shuffle()
 
-        addArtwork(artworkList)
+        addArtwork(artworkList.subList(0, artworkList.size.coerceAtMost(number)))
     }
 
     private fun getShareText(artwork: Artwork) = "${artwork.title} | ${artwork.byline} #pixiv ${artwork.webUri}"
