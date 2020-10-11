@@ -4,7 +4,7 @@ import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import one.oktw.muzeipixivsource.util.HttpUtils.apiHttpClient
+import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import java.util.*
 
 class Fallback {
@@ -17,7 +17,7 @@ class Fallback {
             return Request.Builder()
                 .url("https://app-api.pixiv.net/v1/walkthrough/illusts")
                 .build()
-                .let(apiHttpClient::newCall)
+                .let(httpClient::newCall)
                 .execute()
                 .body!!
                 .let { GSON.fromJson(it.charStream(), IllustList::class.java) }

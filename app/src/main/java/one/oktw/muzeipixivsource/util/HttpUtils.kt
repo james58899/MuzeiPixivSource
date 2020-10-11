@@ -5,8 +5,6 @@ import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
-import okhttp3.internal.platform.Platform
-import one.oktw.muzeipixivsource.hack.DisableSNISSLSocketFactory
 import one.oktw.muzeipixivsource.hack.FallbackDns
 import org.conscrypt.Conscrypt
 import java.net.Inet6Address
@@ -47,12 +45,6 @@ object HttpUtils {
     val httpClient = OkHttpClient().newBuilder()
         .retryOnConnectionFailure(true)
         .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
-        .dns(dns)
-        .build()
-    val apiHttpClient = OkHttpClient().newBuilder()
-        .retryOnConnectionFailure(true)
-        .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
-        .sslSocketFactory(DisableSNISSLSocketFactory(), Platform.get().platformTrustManager())
         .dns(dns)
         .build()
 }
