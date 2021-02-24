@@ -7,6 +7,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import one.oktw.muzeipixivsource.R
@@ -32,10 +33,11 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
         webView.settings.userAgentString = webView.settings.userAgentString.replace(Regex("Version/\\d\\.\\d\\s"), "") // Hide WebView version
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                if (request.isRedirect && request.url.scheme == "pixiv") {
+                val url = request.url
+                if (url.scheme == "pixiv") {
                     // Async handle
                     launch(Dispatchers.IO) {
-                        request.url.getQueryParameter("code")?.let {
+                        url.getQueryParameter("code")?.let {
                             PixivOAuth.login(code, it)
                         }?.let {
                             if (!it.has_error && it.response != null)
@@ -55,13 +57,31 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
                 }
 
                 // Disallow user use WebView browser other page
-                if (request.url.host !in allowDomain && !request.url.toString().startsWith("https://www.pixiv.net/logout.php")) {
-                    if (request.url.host == "socialize.gigya.com") bypassDomainCheck = true else if (!bypassDomainCheck) {
-                        startActivity(Intent(Intent.ACTION_VIEW, request.url))
+                if (url.host !in allowDomain && !url.toString().startsWith("https://www.pixiv.net/logout.php")) {
+                    if (url.host == "socialize.gigya.com") bypassDomainCheck = true else if (!bypassDomainCheck) {
+                        startActivity(Intent(Intent.ACTION_VIEW, url))
                         return true
                     }
                 } else if (bypassDomainCheck) bypassDomainCheck = false // Enable check if back to pixiv.
                 return false
+            }
+
+            // Android API < 24
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                // to new API
+                return shouldOverrideUrlLoading(view, object : WebResourceRequest {
+                    override fun getUrl() = url.toUri()
+
+                    override fun isForMainFrame() = true
+
+                    override fun isRedirect() = true
+
+                    override fun hasGesture() = true
+
+                    override fun getMethod() = "GET"
+
+                    override fun getRequestHeaders() = emptyMap<String, String>()
+                })
             }
         }
 
