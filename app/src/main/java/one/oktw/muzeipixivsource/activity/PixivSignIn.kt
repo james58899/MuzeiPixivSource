@@ -3,7 +3,6 @@ package one.oktw.muzeipixivsource.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -20,10 +19,7 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
         private val allowDomain = listOf("app-api.pixiv.net", "accounts.pixiv.net", "oauth.secure.pixiv.net")
     }
 
-    private val messageDigest = MessageDigest.getInstance("SHA-256")
-    private val securityRandom = SecureRandom()
     private lateinit var code: String
-    private lateinit var webView: WebView
     private var bypassDomainCheck = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +27,7 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
 
         // Set up the login form.
         setContentView(R.layout.activity_pixiv_login)
-        webView = findViewById(R.id.webview)
+        val webView: WebView = findViewById(R.id.webview)
         webView.settings.javaScriptEnabled = true
         webView.settings.userAgentString = webView.settings.userAgentString.replace(Regex("Version/\\d\\.\\d\\s"), "") // Hide WebView version
         webView.webViewClient = object : WebViewClient() {
@@ -71,13 +67,12 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
 
         val (code, hash) = generateCodeAndHash()
         this.code = code
-        Log.i("LOGIN webview", "code: $code, hash: $hash")
-        webView.loadUrl("https://app-api.pixiv.net/web/v1/login?code_challenge=$hash&code_challenge_method=S256&client=pixiv-android") // Or any other URL...
+        webView.loadUrl("https://app-api.pixiv.net/web/v1/login?code_challenge=$hash&code_challenge_method=S256&client=pixiv-android")
     }
 
     private fun generateCodeAndHash(): Pair<String, String> {
-        val code = ByteArray(32).apply(securityRandom::nextBytes).let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
+        val code = ByteArray(32).apply(SecureRandom()::nextBytes).let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
 
-        return code to Base64.encodeToString(messageDigest.digest(code.encodeToByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
+        return code to Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(code.encodeToByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
     }
 }
