@@ -11,8 +11,6 @@ import com.google.android.apps.muzei.api.provider.ProviderContract
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
-import one.oktw.muzeipixivsource.pixiv.PixivOAuth
-import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.provider.MuzeiProvider
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.MUZEI_PACKAGE
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
@@ -81,7 +79,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onActivityResult(request, result, data)
 
         when (request) {
-            PIXIV_LOGIN -> onLogin(result, data)
+            PIXIV_LOGIN -> if (result == RESULT_OK) {
+                updateAccountInfo()
+                updateFetchModePreference()
+            }
         }
     }
 
@@ -121,17 +122,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             true
         }
-    }
-
-    private fun onLogin(result: Int, data: Intent?) {
-        if (result != RESULT_OK || data == null) return
-
-        data.getParcelableExtra<OAuthResponse>("response")?.let {
-            PixivOAuth.save(preferenceManager.sharedPreferences, it)
-        }
-
-        updateAccountInfo()
-        updateFetchModePreference()
     }
 
     private fun updateAccountInfo() {

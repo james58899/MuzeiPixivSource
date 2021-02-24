@@ -209,10 +209,8 @@ class MuzeiProvider : MuzeiArtProvider() {
         analytics.logEvent("update_token", null)
 
         try {
-            PixivOAuth.refresh(
-                preference.getString(SettingsFragment.KEY_PIXIV_DEVICE_TOKEN, null) ?: return,
-                preference.getString(SettingsFragment.KEY_PIXIV_REFRESH_TOKEN, null) ?: return
-            ).response?.let { PixivOAuth.save(preference, it) }
+            PixivOAuth.refresh(preference.getString(SettingsFragment.KEY_PIXIV_REFRESH_TOKEN, null) ?: return).response
+                ?.let { PixivOAuth.save(preference, it) }
         } catch (e: Exception) {
             Log.e("update_token", "update token error", e)
             crashlytics.recordException(e)

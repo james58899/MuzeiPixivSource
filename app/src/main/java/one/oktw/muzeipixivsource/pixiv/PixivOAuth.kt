@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import okhttp3.*
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
-import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_DEVICE_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_REFRESH_TOKEN
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_USER_ID
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_USER_NAME
@@ -25,32 +24,32 @@ import kotlin.coroutines.suspendCoroutine
 class PixivOAuth {
     companion object {
         private const val API = "https://oauth.secure.pixiv.net/auth/token"
+        private const val REDIRECT_URL = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback" // From https://app-api.pixiv.net/idp-urls
         private const val CLIENT_ID = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
         private const val CLIENT_SECRET = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
 
-        suspend fun login(username: String, password: String): OAuth {
+        suspend fun login(verifierCode: String, authorizationCode: String): OAuth {
             return sendRequest(
                 FormBody.Builder()
                     .add("client_id", CLIENT_ID)
                     .add("client_secret", CLIENT_SECRET)
-                    .add("get_secure_url", "true")
-                    .add("grant_type", "password")
-                    .add("device_token", "pixiv")
-                    .add("username", username)
-                    .add("password", password)
+                    .add("grant_type", "authorization_code")
+                    .add("code_verifier", verifierCode)
+                    .add("code", authorizationCode)
+                    .add("redirect_uri", REDIRECT_URL)
+                    .add("include_policy", "true") // enable new api
                     .build()
             )
         }
 
-        suspend fun refresh(deviceToken: String, refreshToken: String): OAuth {
+        suspend fun refresh(refreshToken: String): OAuth {
             return sendRequest(
                 FormBody.Builder()
                     .add("client_id", CLIENT_ID)
                     .add("client_secret", CLIENT_SECRET)
-                    .add("get_secure_url", "true")
                     .add("grant_type", "refresh_token")
-                    .add("device_token", deviceToken)
                     .add("refresh_token", refreshToken)
+                    .add("include_policy", "true") // enable new api
                     .build()
             )
         }
@@ -58,7 +57,6 @@ class PixivOAuth {
         fun save(preference: SharedPreferences, data: OAuthResponse) = preference.edit {
             putString(KEY_PIXIV_ACCESS_TOKEN, data.accessToken)
             putString(KEY_PIXIV_REFRESH_TOKEN, data.refreshToken)
-            putString(KEY_PIXIV_DEVICE_TOKEN, data.deviceToken)
             putInt(KEY_PIXIV_USER_ID, data.user.id)
             putString(KEY_PIXIV_USER_USERNAME, data.user.account)
             putString(KEY_PIXIV_USER_NAME, data.user.name)

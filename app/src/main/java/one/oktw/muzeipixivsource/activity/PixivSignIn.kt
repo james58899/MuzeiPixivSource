@@ -2,107 +2,82 @@ package one.oktw.muzeipixivsource.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Patterns
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
+import android.util.Base64
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_pixiv_login.*
+import androidx.core.net.toUri
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
-import one.oktw.muzeipixivsource.pixiv.model.OAuth
-import java.io.IOException
+import org.mozilla.geckoview.*
+import java.security.MessageDigest
+import java.security.SecureRandom
 
 class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispatchers.Main + SupervisorJob()) {
+    companion object {
+        private val allowDomain = listOf("app-api.pixiv.net", "accounts.pixiv.net", "oauth.secure.pixiv.net")
+    }
+
+    private val messageDigest = MessageDigest.getInstance("SHA-256")
+    private val securityRandom = SecureRandom()
+    private lateinit var code: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Set up the login form.
         setContentView(R.layout.activity_pixiv_login)
+        val view: GeckoView = findViewById(R.id.geckoview)
+        val session = GeckoSession()
+        val runtime = GeckoRuntime.getDefault(this)
+        session.navigationDelegate = object : GeckoSession.NavigationDelegate {
+            override fun onLoadRequest(session: GeckoSession, request: GeckoSession.NavigationDelegate.LoadRequest): GeckoResult<AllowOrDeny>? {
+                if (request.isRedirect && request.uri.startsWith("pixiv://")) {
+                    // Async handle
+                    launch(Dispatchers.IO) {
+                        request.uri.toUri().getQueryParameter("code")?.let {
+                            PixivOAuth.login(code, it).also { Log.i("LOGIN", it.toString()) }
+                        }?.let {
+                            if (!it.has_error && it.response != null)
+                                withContext(Dispatchers.Main) {
+                                    PixivOAuth.save(PreferenceManager.getDefaultSharedPreferences(this@PixivSignIn), it.response)
+                                    session.close()
+                                    setResult(RESULT_OK)
+                                    finish()
+                                }
+                        } ?: withContext(Dispatchers.Main) {
+                            // TODO error message
+                            session.close()
+                            finish()
+                        }
+                    }
 
-        password.setOnEditorActionListener { _, id, _ ->
-            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                login()
-                return@setOnEditorActionListener true
+                    return GeckoResult.DENY
+                }
+
+                // Disallow user use WebView browser other page
+                if (request.uri.toUri().host !in allowDomain && !request.uri.startsWith("https://www.pixiv.net/logout.php")) {
+                    launch {
+                        startActivity(Intent(Intent.ACTION_VIEW, request.uri.toUri()))
+                    }
+                    return GeckoResult.DENY
+                }
+                return super.onLoadRequest(session, request)
             }
-            false
         }
 
-        login_button.setOnClickListener { login() }
+        session.open(runtime)
+        view.setSession(session)
+        val (code, hash) = generateCodeAndHash()
+        this.code = code
+        Log.i("LOGIN webview", "code: $code, hash: $hash")
+        session.loadUri("https://app-api.pixiv.net/web/v1/login?code_challenge=$hash&code_challenge_method=S256&client=pixiv-android") // Or any other URL...
     }
 
-    private fun login() {
-        // Reset errors.
-        username.error = null
-        password.error = null
+    private fun generateCodeAndHash(): Pair<String, String> {
+        val code = ByteArray(32).apply(securityRandom::nextBytes).let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
 
-        // Store values at the time of the login attempt.
-        val textUsername = username.text.toString()
-        val textPassword = password.text.toString()
-
-        var cancel = false
-        var focusView: View? = null
-
-        // Check for a valid password.
-        if (TextUtils.isEmpty(textPassword)) {
-            password.error = getString(R.string.error_field_required)
-            focusView = password
-            cancel = true
-        } else if (textPassword.length < 6) {
-            password.error = getString(R.string.error_invalid_password)
-            focusView = password
-            cancel = true
-        }
-
-        // Check for a valid username.
-        if (TextUtils.isEmpty(textUsername)) {
-            username.error = getString(R.string.error_field_required)
-            focusView = username
-            cancel = true
-        } else if (!isUsernameValid(textUsername)) {
-            username.error = getString(R.string.error_invalid_username)
-            focusView = username
-            cancel = true
-        }
-
-        if (cancel) focusView?.requestFocus() else launch {
-            // close IME
-            (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).apply {
-                hideSoftInputFromWindow(username.windowToken, 0)
-                hideSoftInputFromWindow(password.windowToken, 0)
-            }
-
-            // disable button
-            login_button.isEnabled = false
-
-            val login = try {
-                withContext(Dispatchers.IO) { PixivOAuth.login(textUsername, textPassword) }
-            } catch (e: IOException) {
-                OAuth(has_error = true, errors = e.message?.let { OAuth.Errors(OAuth.Errors.System(it)) })
-            }
-
-            if (!login.has_error && login.response != null) {
-                setResult(RESULT_OK, Intent().putExtra("response", login.response))
-                finish()
-            } else {
-                login_button.isEnabled = true
-
-                // TODO show error message
-                Snackbar.make(login_layout, getString(R.string.login_fail) + "\n${login.errors?.system?.message}", Snackbar.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun isUsernameValid(username: String): Boolean {
-        // match email
-        if (username.matches(Patterns.EMAIL_ADDRESS.toRegex())) return true
-
-        // match username
-        if (username.matches(Regex("[a-z0-9_-]{3,32}"))) return true
-
-        return false
+        return code to Base64.encodeToString(messageDigest.digest(code.encodeToByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
     }
 }
