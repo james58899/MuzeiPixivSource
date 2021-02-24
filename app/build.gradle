@@ -9,8 +9,8 @@ android {
         applicationId "one.oktw.muzeipixivsource"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 52
-        versionName "2.9.0-DEV5"
+        versionCode 53
+        versionName "2.9.0-BETA1"
     }
 
     buildFeatures {
@@ -47,12 +47,12 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.0'
-    implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.0')
+    implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.1')
     implementation 'com.squareup.okhttp3:okhttp'
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps'
     implementation 'org.conscrypt:conscrypt-android:2.5.1'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation platform('com.google.firebase:firebase-bom:26.0.0')
+    implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation "com.google.android.apps.muzei:muzei-api:3.4.0"
