@@ -55,12 +55,12 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
                 }
 
                 // Disallow user use WebView browser other page
-                if (!bypassDomainCheck && request.url.host !in allowDomain && !request.url.toString().startsWith("https://www.pixiv.net/logout.php")) {
-                    if (request.url.host == "socialize.gigya.com") bypassDomainCheck = true else {
+                if (request.url.host !in allowDomain && !request.url.toString().startsWith("https://www.pixiv.net/logout.php")) {
+                    if (request.url.host == "socialize.gigya.com") bypassDomainCheck = true else if (!bypassDomainCheck) {
                         startActivity(Intent(Intent.ACTION_VIEW, request.url))
                         return true
                     }
-                }
+                } else if (bypassDomainCheck) bypassDomainCheck = false // Enable check if back to pixiv.
                 return false
             }
         }
