@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps'
     implementation 'org.conscrypt:conscrypt-android:2.5.1'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation platform('com.google.firebase:firebase-bom:26.8.0')
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation "com.google.android.apps.muzei:muzei-api:3.4.0"
