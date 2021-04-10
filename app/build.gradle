@@ -50,7 +50,7 @@ dependencies {
     implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.1')
     implementation 'com.squareup.okhttp3:okhttp'
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps'
-    implementation 'org.conscrypt:conscrypt-android:2.5.1'
+    implementation 'org.conscrypt:conscrypt-android:2.5.2'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation platform('com.google.firebase:firebase-bom:27.0.0')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
