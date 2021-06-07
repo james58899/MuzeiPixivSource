@@ -1,9 +1,12 @@
 package one.oktw.muzeipixivsource.provider
 
 import android.app.PendingIntent
+import android.content.ContentUris
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.os.ParcelFileDescriptor.AutoCloseInputStream
 import android.util.Log
 import android.webkit.URLUtil
 import androidx.core.app.RemoteActionCompat
@@ -15,11 +18,12 @@ import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import okio.Pipe
 import okio.buffer
 import one.oktw.muzeipixivsource.R
@@ -55,10 +59,12 @@ import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit.SECONDS
 
-class MuzeiProvider : MuzeiArtProvider() {
+class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(CoroutineName("MuzeiProvider")) {
     private val crashlytics = FirebaseCrashlytics.getInstance()
+    private val downloadLock = ConcurrentHashMap.newKeySet<Long>()
     private lateinit var preference: SharedPreferences
     private lateinit var analytics: FirebaseAnalytics
 
@@ -112,14 +118,15 @@ class MuzeiProvider : MuzeiArtProvider() {
     }
 
     override fun openFile(artwork: Artwork): InputStream {
+        val locked = downloadLock.add(artwork.id)
         val mirror = preference.getString(KEY_FETCH_MIRROR, "")!!
             .let { if (it.isBlank() || URLUtil.isNetworkUrl(it)) it else "https://$it" }
             .let(Uri::parse)
         val uri = artwork.persistentUri!!
             .let { if (mirror.authority.isNullOrBlank()) it else it.buildUpon().authority(mirror.authority).build() }
         val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong()).apply {
-            source.timeout().timeout(10, SECONDS)
-            sink.timeout().timeout(10, SECONDS)
+            source.timeout().timeout(30, SECONDS)
+            sink.timeout().timeout(30, SECONDS)
         }
 
         Request.Builder()
@@ -128,14 +135,51 @@ class MuzeiProvider : MuzeiArtProvider() {
             .build()
             .let(httpClient::newCall)
             .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {}
+                override fun onFailure(call: Call, e: IOException) {
+                    stream.cancel() // Throw IOException to reader
+                }
 
                 override fun onResponse(call: Call, response: Response) {
-                    response.body?.source()?.use { source -> stream.sink.use { source.readAll(it) } }
+                    try {
+                        response.body?.source()?.use { source -> source.readAll(stream.sink) }
+                    } catch (e: IOException) {
+                        stream.cancel()
+                    } finally {
+                        stream.sink.close()
+                        if (locked) downloadLock.remove(artwork.id)
+                    }
                 }
             })
 
         return stream.source.buffer().inputStream()
+    }
+
+    // Fully async, don't blocking Binder thread.
+    override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
+        val id = uri.lastPathSegment?.toLong() ?: return super.openFile(uri, mode)
+        val (output, input) = ParcelFileDescriptor.createPipe()
+        if (downloadLock.contains(id)) launch(Dispatchers.IO) {
+            while (downloadLock.contains(id)) delay(10) // Wait download complete.
+
+            val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
+            try {
+                AutoCloseInputStream(super.openFile(uri, mode)).use { it.copyTo(pipe) }
+            } catch (e: IOException) {
+                input.closeWithError(e.toString())
+            } finally {
+                pipe.closeQuietly()
+            }
+        } else launch(Dispatchers.IO) {
+            val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
+            try {
+                AutoCloseInputStream(super.openFile(uri, mode)).use { it.copyTo(pipe) }
+            } catch (e: IOException) {
+                input.closeWithError(e.toString())
+            } finally {
+                pipe.closeQuietly()
+            }
+        }
+        return output
     }
 
     // New version command dart
@@ -169,6 +213,7 @@ class MuzeiProvider : MuzeiArtProvider() {
                         .putExtra(CommandHandler.INTENT_SHARE_TITLE, artwork.title)
                         .putExtra(CommandHandler.INTENT_SHARE_TEXT, getShareText(artwork))
                         .putExtra(CommandHandler.INTENT_SHARE_FILENAME, artwork.persistentUri!!.pathSegments.last())
+                        .putExtra(CommandHandler.INTENT_SHARE_FILE_URI, ContentUris.withAppendedId(contentUri, artwork.id))
                         .putExtra(CommandHandler.INTENT_SHARE_CACHE_FILE, artwork.data),
                     0
                 )

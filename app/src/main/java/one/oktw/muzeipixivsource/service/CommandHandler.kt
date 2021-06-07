@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.content.FileProvider
 import one.oktw.muzeipixivsource.provider.Commands
 import one.oktw.muzeipixivsource.provider.Commands.*
@@ -19,6 +20,7 @@ class CommandHandler : BroadcastReceiver() {
         // Share command extra data
         const val INTENT_SHARE_FILENAME = "filename"
         const val INTENT_SHARE_CACHE_FILE = "cache_file"
+        const val INTENT_SHARE_FILE_URI = "file_uri"
         const val INTENT_SHARE_TITLE = "title"
         const val INTENT_SHARE_TEXT = "text"
     }
@@ -31,16 +33,23 @@ class CommandHandler : BroadcastReceiver() {
                     context.cacheDir?.resolve("share")?.apply { mkdir() }?.apply { deleteOnExit() }?.resolve(it)
                 } ?: return
 
-                if (!cacheFile.exists()) (intent.getSerializableExtra(INTENT_SHARE_CACHE_FILE) as File?)?.copyTo(cacheFile) ?: return
+                if (!cacheFile.exists()) {
+                    val source = intent.getParcelableExtra<Uri>(INTENT_SHARE_FILE_URI)?.let(context.contentResolver::openInputStream)
+                        ?: (intent.getSerializableExtra(INTENT_SHARE_CACHE_FILE) as File?)?.inputStream()
+                        ?: return
+                    cacheFile.outputStream().use { file -> source.use { it.copyTo(file) } }
+                }
 
                 Intent(Intent.ACTION_SEND).apply {
+                    val title = intent.getStringExtra(INTENT_SHARE_TITLE)
                     val shareUri = FileProvider.getUriForFile(context, "one.oktw.muzeipixivsource.share", cacheFile)
+                    putExtra(Intent.EXTRA_TITLE, title)
                     putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(INTENT_SHARE_TEXT))
                     putExtra(Intent.EXTRA_STREAM, shareUri)
-                    clipData = ClipData(intent.getStringExtra(INTENT_SHARE_TITLE), arrayOf("image/*"), ClipData.Item(shareUri))
+                    clipData = ClipData(title, arrayOf("image/*"), ClipData.Item(shareUri))
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                     type = "image/*"
-                }.let { context.startActivity(Intent.createChooser(it, intent.getStringExtra(INTENT_SHARE_TITLE)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+                }.let { context.startActivity(Intent.createChooser(it, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             }
             COMMAND_DOWNLOAD -> Unit // TODO
         }
