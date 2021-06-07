@@ -51,6 +51,17 @@
                 android:value="one.oktw.muzeipixivsource.activity.SettingsActivity" />
         </provider>
 
+        <provider
+            android:name="one.oktw.muzeipixivsource.provider.MuzeiDocumentProvider"
+            android:authorities="one.oktw.muzeipixivsource.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
         <!-- Share file provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
