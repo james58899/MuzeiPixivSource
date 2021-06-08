@@ -46,6 +46,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SIZE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_VIEW
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
+import one.oktw.muzeipixivsource.hack.MirrorOutputStream
 import one.oktw.muzeipixivsource.pixiv.Pixiv
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
@@ -57,8 +58,7 @@ import one.oktw.muzeipixivsource.provider.Commands.COMMAND_SHARE
 import one.oktw.muzeipixivsource.service.CommandHandler
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit.SECONDS
 
@@ -136,16 +136,19 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
             .let(httpClient::newCall)
             .enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
+                    if (locked) downloadLock.remove(artwork.id)
                     stream.cancel() // Throw IOException to reader
                 }
 
                 override fun onResponse(call: Call, response: Response) {
+                    if (response.code in 400..499) onInvalidArtwork(artwork)
+
                     try {
                         response.body?.source()?.use { source -> source.readAll(stream.sink) }
                     } catch (e: IOException) {
                         stream.cancel()
                     } finally {
-                        stream.sink.close()
+                        stream.sink.closeQuietly()
                         if (locked) downloadLock.remove(artwork.id)
                     }
                 }
@@ -156,27 +159,59 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
 
     // Fully async, don't blocking Binder thread.
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
-        val id = uri.lastPathSegment?.toLong() ?: return super.openFile(uri, mode)
-        val (output, input) = ParcelFileDescriptor.createPipe()
-        if (downloadLock.contains(id)) launch(Dispatchers.IO) {
-            while (downloadLock.contains(id)) delay(10) // Wait download complete.
+        if (mode != "r") return super.openFile(uri, mode)
 
-            val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
-            try {
-                AutoCloseInputStream(super.openFile(uri, mode)).use { it.copyTo(pipe) }
-            } catch (e: IOException) {
-                input.closeWithError(e.toString())
-            } finally {
-                pipe.closeQuietly()
+        val artwork = query(uri, null, null, null, null).use { data ->
+            if (!data.moveToFirst()) {
+                throw FileNotFoundException("Could not get persistent uri for $uri")
             }
-        } else launch(Dispatchers.IO) {
-            val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
-            try {
-                AutoCloseInputStream(super.openFile(uri, mode)).use { it.copyTo(pipe) }
-            } catch (e: IOException) {
-                input.closeWithError(e.toString())
-            } finally {
-                pipe.closeQuietly()
+            Artwork.fromCursor(data)
+        }
+        if (!isArtworkValid(artwork)) {
+            onInvalidArtwork(artwork)
+            throw SecurityException("Artwork $artwork was marked as invalid")
+        }
+        val (output, input) = ParcelFileDescriptor.createPipe()
+        when {
+            downloadLock.contains(artwork.id) -> launch(Dispatchers.IO) {
+                while (downloadLock.contains(artwork.id)) delay(10) // Wait download complete.
+
+                val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
+                try {
+                    AutoCloseInputStream(super.openFile(uri, mode)).use { it.copyTo(pipe) }
+                } catch (e: IOException) {
+                    input.closeWithError(e.toString())
+                } finally {
+                    pipe.closeQuietly()
+                }
+            }
+            artwork.data.exists() -> return ParcelFileDescriptor.open(artwork.data, ParcelFileDescriptor.parseMode(mode))
+            else -> launch(Dispatchers.IO) {
+                artwork.data.parentFile?.apply {
+                    if (!exists() && !mkdirs()) input.closeWithError("Unable to create directory $this for $artwork")
+                }
+
+                val pipe = ParcelFileDescriptor.AutoCloseOutputStream(input)
+                val mirror = MirrorOutputStream(FileOutputStream(artwork.data), pipe)
+                try {
+                    openFile(artwork).use { input -> input.copyTo(mirror) }
+                } catch (e: Exception) {
+                    if (e !is IOException) {
+                        if (Log.isLoggable("MuzeiArtProvider", Log.INFO)) {
+                            Log.i("MuzeiArtProvider", "Unable to open artwork $artwork for $uri", e)
+                        }
+                        onInvalidArtwork(artwork)
+                    }
+                    // Delete the file in cases of an error so that we will try again from scratch next time.
+                    if (artwork.data.exists() && !artwork.data.delete()) {
+                        if (Log.isLoggable("MuzeiArtProvider", Log.INFO)) {
+                            Log.i("MuzeiArtProvider", "Error deleting partially downloaded file after error", e)
+                        }
+                    }
+                    input.closeWithError("Could not download artwork $artwork for $uri: ${e.message}")
+                } finally {
+                    mirror.closeQuietly()
+                }
             }
         }
         return output

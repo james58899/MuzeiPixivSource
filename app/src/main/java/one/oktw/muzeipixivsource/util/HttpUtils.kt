@@ -1,6 +1,7 @@
 package one.oktw.muzeipixivsource.util
 
 import okhttp3.ConnectionSpec
+import okhttp3.Dispatcher
 import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
@@ -46,5 +47,6 @@ object HttpUtils {
         .retryOnConnectionFailure(true)
         .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
         .dns(dns)
+        .dispatcher(Dispatcher().apply { maxRequestsPerHost = 16 })
         .build()
 }
