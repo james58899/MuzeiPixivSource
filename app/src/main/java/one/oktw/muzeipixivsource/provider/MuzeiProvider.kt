@@ -78,7 +78,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
     }
 
     override fun onLoadRequested(initial: Boolean) {
-        runBlocking { updateToken() }
+        runBlocking { updateToken() } // TODO handle token invalid
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, false)
