@@ -171,7 +171,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
             onInvalidArtwork(artwork)
             throw SecurityException("Artwork $artwork was marked as invalid")
         }
-        val (output, input) = ParcelFileDescriptor.createPipe()
+        val (output, input) = ParcelFileDescriptor.createReliablePipe()
         when {
             downloadLock.contains(artwork.id) -> launch(Dispatchers.IO) {
                 while (downloadLock.contains(artwork.id)) delay(10) // Wait download complete.
@@ -217,7 +217,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
         return output
     }
 
-    // New version command dart
+    // New version command
     override fun getCommandActions(artwork: Artwork): List<RemoteActionCompat> {
         val context = context!!
         return listOf(
