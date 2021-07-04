@@ -138,6 +138,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
                 override fun onFailure(call: Call, e: IOException) {
                     if (locked) downloadLock.remove(artwork.id)
                     stream.cancel() // Throw IOException to reader
+                    crashlytics.recordException(e)
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -147,6 +148,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
                         response.body?.source()?.use { source -> source.readAll(stream.sink) }
                     } catch (e: IOException) {
                         stream.cancel()
+                        crashlytics.recordException(e)
                     } finally {
                         stream.sink.closeQuietly()
                         if (locked) downloadLock.remove(artwork.id)
