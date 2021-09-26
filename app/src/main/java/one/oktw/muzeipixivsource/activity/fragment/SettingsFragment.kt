@@ -3,6 +3,8 @@ package one.oktw.muzeipixivsource.activity.fragment
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.preference.*
@@ -20,10 +22,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var fetchMode: ListPreference
     private lateinit var rankingPreference: ListPreference
     private lateinit var bookmarkPreference: SwitchPreferenceCompat
+    private lateinit var loginActivityLauncher: ActivityResultLauncher<Intent>
 
     companion object {
-        private const val PIXIV_LOGIN = 0
-
         // Fetch mode value
         const val FETCH_MODE_FALLBACK = -1
         const val FETCH_MODE_RANKING = 0
@@ -58,7 +59,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
         if (preference is NumberPickerPreference) {
+
             NumberPickerPreference.Fragment.newInstance(preference.key).also {
+                @Suppress("DEPRECATION")
                 it.setTargetFragment(this, 0)
                 it.show(parentFragmentManager, "androidx.preference.PreferenceFragment.DIALOG")
             }
@@ -73,13 +76,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(KEY_ACCOUNT)?.let { initAccountButton(it) }
         findPreference<Preference>(KEY_MUZEI)?.let { initMuzeiButton(it) }
         findPreference<Preference>(KEY_FETCH_MODE)?.let { initFetchMode(it) }
-    }
 
-    override fun onActivityResult(request: Int, result: Int, data: Intent?) {
-        super.onActivityResult(request, result, data)
-
-        when (request) {
-            PIXIV_LOGIN -> if (result == RESULT_OK) {
+        loginActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
                 updateAccountInfo()
                 updateFetchModePreference()
             }
@@ -99,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .show()
             } else {
-                startActivityForResult(Intent(activity, PixivSignIn::class.java), PIXIV_LOGIN)
+                loginActivityLauncher.launch(Intent(activity, PixivSignIn::class.java))
             }
 
             true

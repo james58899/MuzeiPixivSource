@@ -13,7 +13,6 @@ import androidx.core.app.RemoteActionCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
-import com.google.android.apps.muzei.api.UserCommand
 import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -272,22 +271,6 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
 //                )
 //            )
         )
-    }
-
-    override fun getCommands(artwork: Artwork): MutableList<UserCommand> {
-        return mutableListOf(
-            UserCommand(COMMAND_OPEN.code, context!!.getString(R.string.button_open)),
-            UserCommand(COMMAND_SHARE.code, context!!.getString(R.string.button_share))
-//            UserCommand(COMMAND_DOWNLOAD.code, context!!.getString(R.string.button_download))
-        )
-    }
-
-    override fun onCommand(artwork: Artwork, id: Int) {
-        when (id) {
-            COMMAND_OPEN.code -> getCommandActions(artwork)[0].actionIntent.send()
-            COMMAND_SHARE.code -> getCommandActions(artwork)[1].actionIntent.send()
-//            COMMAND_DOWNLOAD.code -> getCommandActions(artwork)[2].actionIntent.send()
-        }
     }
 
     private suspend fun updateToken() {
