@@ -58,7 +58,10 @@ import one.oktw.muzeipixivsource.provider.Commands.COMMAND_SHARE
 import one.oktw.muzeipixivsource.service.CommandHandler
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
 import org.jsoup.Jsoup
-import java.io.*
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit.SECONDS
 
@@ -291,8 +294,8 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
         analytics.logEvent("update_token", null)
 
         try {
-            PixivOAuth.refresh(preference.getString(SettingsFragment.KEY_PIXIV_REFRESH_TOKEN, null) ?: return).response
-                ?.let { PixivOAuth.save(preference, it) }
+            val res = PixivOAuth.refresh(preference.getString(SettingsFragment.KEY_PIXIV_REFRESH_TOKEN, null) ?: return)
+            if (!res.has_error) res.response?.let { PixivOAuth.save(preference, it) } else PixivOAuth.logout(preference)
         } catch (e: Exception) {
             Log.e("update_token", "update token error", e)
             crashlytics.recordException(e)

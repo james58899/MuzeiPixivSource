@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
-import androidx.core.content.edit
 import androidx.preference.*
 import com.google.android.apps.muzei.api.provider.ProviderContract
 import one.oktw.muzeipixivsource.R
 import one.oktw.muzeipixivsource.activity.PixivSignIn
 import one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.provider.MuzeiProvider
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.MUZEI_PACKAGE
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
@@ -50,7 +50,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_FILTER_BOOKMARK = "filter_bookmark"
         const val KEY_PIXIV_ACCESS_TOKEN = "pixiv_access_token"
         const val KEY_PIXIV_REFRESH_TOKEN = "pixiv_refresh_token"
-        const val KEY_PIXIV_DEVICE_TOKEN = "pixiv_device_token"
+        const val KEY_PIXIV_DEVICE_TOKEN = "pixiv_device_token" // Old API token
         const val KEY_PIXIV_USER_ID = "pixiv_user_id"
         const val KEY_PIXIV_USER_NAME = "pixiv_user_name"
         const val KEY_PIXIV_USER_USERNAME = "pixiv_user_username"
@@ -169,15 +169,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun logout() {
-        preferenceManager.sharedPreferences.edit {
-            remove(KEY_PIXIV_ACCESS_TOKEN)
-            remove(KEY_PIXIV_REFRESH_TOKEN)
-            remove(KEY_PIXIV_DEVICE_TOKEN)
-            remove(KEY_PIXIV_USER_ID)
-            remove(KEY_PIXIV_USER_USERNAME)
-            remove(KEY_PIXIV_USER_NAME)
-        }
-
+        PixivOAuth.logout(preferenceManager.sharedPreferences)
         updateAccountInfo()
         updateFetchModePreference()
     }
