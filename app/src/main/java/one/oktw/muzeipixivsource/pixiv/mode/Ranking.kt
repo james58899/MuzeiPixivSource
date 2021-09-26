@@ -21,6 +21,7 @@ class Ranking(private val token: String, private val category: RankingCategory) 
 
             if (res.nextUrl != null) url = res.nextUrl else break
 
+            if (res.illusts.isNullOrEmpty()) break
             list += res.illusts
         } while (list.size < number)
 

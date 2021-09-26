@@ -28,6 +28,7 @@ class Bookmark(private val token: String, private val user: Int, private val pri
                 i++
             }
 
+            if (res.illusts.isNullOrEmpty()) break
             list += res.illusts
         } while (list.size < number)
 

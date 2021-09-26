@@ -299,7 +299,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
         }
     }
 
-    private fun publish(list: ArrayList<Illust>) {
+    private fun publish(list: List<Illust>) {
         val number = preference.getInt(KEY_FETCH_NUMBER, 30)
         val cleanHistory = preference.getBoolean(KEY_FETCH_CLEANUP, true)
         val filterNSFW = preference.getBoolean(KEY_FILTER_SAFE, true)

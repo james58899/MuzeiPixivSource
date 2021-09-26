@@ -5,12 +5,11 @@ import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
-import java.util.*
 
 class Fallback {
     companion object {
-        fun getImages(): ArrayList<Illust> {
-            return request().illusts
+        fun getImages(): List<Illust> {
+            return request().illusts ?: emptyList()
         }
 
         private fun request(): IllustList {
