@@ -5,7 +5,6 @@ import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
-import java.util.*
 
 class Recommend(private val token: String) {
     fun getImages(number: Int): ArrayList<Illust> {
@@ -17,6 +16,7 @@ class Recommend(private val token: String) {
 
             if (res.nextUrl != null) url = res.nextUrl else break
 
+            if (res.illusts.isNullOrEmpty()) break
             list += res.illusts
         } while (list.size < number)
 
