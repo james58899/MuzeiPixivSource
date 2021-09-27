@@ -67,4 +67,6 @@
     <string name="button_open">开启</string>
     <string name="button_share">分享</string>
     <string name="button_download">下载</string>
+    <string name="pref_fetch_direct_summary">绕过网络检测，无网络障碍建议关闭</string>
+    <string name="pref_fetch_direct">直接连线</string>
 </resources>

@@ -51,10 +51,13 @@ object HttpUtils {
         .dns(dns)
         .dispatcher(Dispatcher().apply { maxRequestsPerHost = 16 })
         .build()
-    val apiHttpClient = OkHttpClient().newBuilder()
+    val directHttpClient = OkHttpClient().newBuilder()
         .retryOnConnectionFailure(true)
         .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
         .sslSocketFactory(DisableSNISSLSocketFactory(), Platform.get().platformTrustManager())
         .dns(dns)
+        .addInterceptor {
+            it.proceed(it.request().newBuilder().url(it.request().url.newBuilder().host("pixiv.net").build()).header("Host", it.request().url.host).build())
+        }
         .build()
 }

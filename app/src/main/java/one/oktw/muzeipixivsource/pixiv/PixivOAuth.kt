@@ -12,7 +12,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.pixiv.model.OAuth
 import one.oktw.muzeipixivsource.pixiv.model.OAuthResponse
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
+import one.oktw.muzeipixivsource.util.HttpUtils
 import java.io.IOException
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -29,27 +29,25 @@ class PixivOAuth {
         private const val CLIENT_ID = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
         private const val CLIENT_SECRET = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
 
-        suspend fun login(verifierCode: String, authorizationCode: String): OAuth = sendRequest(
-            FormBody.Builder()
-                .add("client_id", CLIENT_ID)
-                .add("client_secret", CLIENT_SECRET)
-                .add("grant_type", "authorization_code")
-                .add("code_verifier", verifierCode)
-                .add("code", authorizationCode)
-                .add("redirect_uri", REDIRECT_URL)
-                .add("include_policy", "true") // enable new api
-                .build()
-        )
+        suspend fun login(verifierCode: String, authorizationCode: String, direct: Boolean = false): OAuth = FormBody.Builder()
+            .add("client_id", CLIENT_ID)
+            .add("client_secret", CLIENT_SECRET)
+            .add("grant_type", "authorization_code")
+            .add("code_verifier", verifierCode)
+            .add("code", authorizationCode)
+            .add("redirect_uri", REDIRECT_URL)
+            .add("include_policy", "true") // enable new api
+            .build()
+            .let { sendRequest(it, direct) }
 
-        suspend fun refresh(refreshToken: String): OAuth = sendRequest(
-            FormBody.Builder()
-                .add("client_id", CLIENT_ID)
-                .add("client_secret", CLIENT_SECRET)
-                .add("grant_type", "refresh_token")
-                .add("refresh_token", refreshToken)
-                .add("include_policy", "true") // enable new api
-                .build()
-        )
+        suspend fun refresh(refreshToken: String, direct: Boolean = false): OAuth = FormBody.Builder()
+            .add("client_id", CLIENT_ID)
+            .add("client_secret", CLIENT_SECRET)
+            .add("grant_type", "refresh_token")
+            .add("refresh_token", refreshToken)
+            .add("include_policy", "true") // enable new api
+            .build()
+            .let { sendRequest(it, direct) }
 
         fun save(preference: SharedPreferences, data: OAuthResponse) = preference.edit {
             remove(KEY_PIXIV_DEVICE_TOKEN) // Old API token
@@ -69,9 +67,8 @@ class PixivOAuth {
             remove(KEY_PIXIV_USER_NAME)
         }
 
-        private suspend fun sendRequest(data: RequestBody) = suspendCoroutine<OAuth> {
-            val httpClient = httpClient.newBuilder().addNetworkInterceptor(OAuthInterceptor()).build()
-
+        private suspend fun sendRequest(data: RequestBody, direct: Boolean = false) = suspendCoroutine<OAuth> {
+            val httpClient = (if (direct) HttpUtils.directHttpClient else HttpUtils.httpClient).newBuilder().addInterceptor(OAuthInterceptor()).build()
             Request.Builder()
                 .post(data)
                 .url(API)

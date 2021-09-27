@@ -32,6 +32,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RANKING
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_RECOMMEND
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_CLEANUP
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_DIRECT
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_FALLBACK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MIRROR
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FETCH_MODE
@@ -45,6 +46,7 @@ import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_SIZE
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_FILTER_VIEW
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_ACCESS_TOKEN
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.KEY_PIXIV_REFRESH_TOKEN
 import one.oktw.muzeipixivsource.hack.MirrorOutputStream
 import one.oktw.muzeipixivsource.pixiv.Pixiv
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
@@ -84,16 +86,13 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, false)
-        val pixiv = Pixiv(token = token, number = preference.getInt(KEY_FETCH_NUMBER, 30))
+        val pixiv = Pixiv(token, preference.getInt(KEY_FETCH_NUMBER, 30), preference.getBoolean(KEY_FETCH_DIRECT, false))
 
         try {
             when (if (token == null) FETCH_MODE_FALLBACK else preference.getString(KEY_FETCH_MODE, "0")!!.toInt()) {
                 FETCH_MODE_FALLBACK -> pixiv.getFallback().let(::publish)
                 FETCH_MODE_RECOMMEND -> pixiv.getRecommend().let(::publish)
-                FETCH_MODE_RANKING -> pixiv.getRanking(
-                    valueOf(preference.getString(KEY_FETCH_MODE_RANKING, Monthly.name)!!)
-                ).let(::publish)
-
+                FETCH_MODE_RANKING -> pixiv.getRanking(valueOf(preference.getString(KEY_FETCH_MODE_RANKING, Monthly.name)!!)).let(::publish)
                 FETCH_MODE_BOOKMARK -> pixiv.getBookmark(
                     preference.getInt(SettingsFragment.KEY_PIXIV_USER_ID, -1),
                     preference.getBoolean(SettingsFragment.KEY_FETCH_MODE_BOOKMARK, false)
@@ -277,7 +276,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
         analytics.logEvent("update_token", null)
 
         try {
-            val res = PixivOAuth.refresh(preference.getString(SettingsFragment.KEY_PIXIV_REFRESH_TOKEN, null) ?: return)
+            val res = PixivOAuth.refresh(preference.getString(KEY_PIXIV_REFRESH_TOKEN, null) ?: return, preference.getBoolean(KEY_FETCH_DIRECT, false))
             if (!res.has_error) res.response?.let { PixivOAuth.save(preference, it) } else PixivOAuth.logout(preference)
         } catch (e: Exception) {
             Log.e("update_token", "update token error", e)

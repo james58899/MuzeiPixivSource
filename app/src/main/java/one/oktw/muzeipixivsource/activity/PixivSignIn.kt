@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import one.oktw.muzeipixivsource.R
+import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
 import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -37,12 +38,13 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
                 if (url.scheme == "pixiv") {
                     // Async handle
                     launch(Dispatchers.IO) {
+                        val preference = PreferenceManager.getDefaultSharedPreferences(this@PixivSignIn)
                         url.getQueryParameter("code")?.let {
-                            PixivOAuth.login(code, it)
+                            PixivOAuth.login(code, it, preference.getBoolean(SettingsFragment.KEY_FETCH_DIRECT, false))
                         }?.let {
                             if (!it.has_error && it.response != null)
                                 withContext(Dispatchers.Main) {
-                                    PixivOAuth.save(PreferenceManager.getDefaultSharedPreferences(this@PixivSignIn), it.response)
+                                    PixivOAuth.save(preference, it.response)
                                     webView.destroy()
                                     setResult(RESULT_OK)
                                     finish()

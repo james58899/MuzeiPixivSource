@@ -94,4 +94,6 @@
     <string name="button_open">Open</string>
     <string name="button_share">Share</string>
     <string name="button_save">Download</string>
+    <string name="pref_fetch_direct">Direct connection</string>
+    <string name="pref_fetch_direct_summary">Bypass network filter, recommended disabled.</string>
 </resources>
