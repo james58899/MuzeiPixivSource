@@ -102,16 +102,14 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
             // TODO better except handle
             Log.e("fetch", "fetch update error: ${e1.printStackTrace()}", e1)
             crashlytics.recordException(e1)
-            if (e1.suppressed.isNotEmpty()) e1.suppressed.forEach(crashlytics::recordException)
 
             if (!fallback) throw e1
+
             try {
                 pixiv.getFallback().let(::publish)
             } catch (e2: Exception) {
                 Log.e("fetch", "fetch update fallback error", e2)
-
                 crashlytics.recordException(e2)
-                if (e1.suppressed.isNotEmpty()) e1.suppressed.forEach(crashlytics::recordException)
 
                 throw e2
             }

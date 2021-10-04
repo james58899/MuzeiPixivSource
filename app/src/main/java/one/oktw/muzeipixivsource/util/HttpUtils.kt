@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.internal.platform.Platform
 import one.oktw.muzeipixivsource.hack.DisableSNISSLSocketFactory
-import one.oktw.muzeipixivsource.hack.FallbackDns
+import one.oktw.muzeipixivsource.hack.ParallelDns
 import org.conscrypt.Conscrypt
 import java.net.Inet6Address
 import java.net.InetAddress
@@ -43,7 +43,7 @@ object HttpUtils {
         .includeIPv6(ipv6Ready)
         .bootstrapDnsHosts(InetAddress.getByName("74.82.42.42"))
         .build()
-    private val dns = FallbackDns(cloudFlareDoH, HEDoH, googleDoH, Dns.SYSTEM)
+    private val dns = ParallelDns(cloudFlareDoH, HEDoH, googleDoH, Dns.SYSTEM)
 
     val httpClient = OkHttpClient().newBuilder()
         .retryOnConnectionFailure(true)
