@@ -48,7 +48,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
-    implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.1')
+    implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.2')
     implementation 'com.squareup.okhttp3:okhttp'
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps'
     implementation 'org.conscrypt:conscrypt-android:2.5.2'
@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation "com.google.android.apps.muzei:muzei-api:3.4.0"
-    implementation 'org.jsoup:jsoup:1.14.2'
+    implementation 'org.jsoup:jsoup:1.14.3'
 }
 
 android.applicationVariants.all { variant ->

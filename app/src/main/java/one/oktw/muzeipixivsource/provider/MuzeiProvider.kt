@@ -82,7 +82,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
     }
 
     override fun onLoadRequested(initial: Boolean) {
-        runBlocking { updateToken() } // TODO handle token invalid
+        runBlocking { updateToken() }
 
         val token: String? = preference.getString(KEY_PIXIV_ACCESS_TOKEN, null)
         val fallback = preference.getBoolean(KEY_FETCH_FALLBACK, false)
@@ -121,8 +121,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
         val mirror = preference.getString(KEY_FETCH_MIRROR, "")!!
             .let { if (it.isBlank() || URLUtil.isNetworkUrl(it)) it else "https://$it" }
             .let(Uri::parse)
-        val uri = artwork.persistentUri!!
-            .let { if (mirror.authority.isNullOrBlank()) it else it.buildUpon().authority(mirror.authority).build() }
+        val uri = artwork.persistentUri!!.let { if (mirror.authority.isNullOrBlank()) it else it.buildUpon().authority(mirror.authority).build() }
         val stream = Pipe(DEFAULT_BUFFER_SIZE.toLong()).apply {
             source.timeout().timeout(30, SECONDS)
             sink.timeout().timeout(30, SECONDS)

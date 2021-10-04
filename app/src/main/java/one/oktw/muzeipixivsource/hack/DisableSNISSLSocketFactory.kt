@@ -10,7 +10,7 @@ class DisableSNISSLSocketFactory : SSLSocketFactory() {
     override fun getDefaultCipherSuites(): Array<String> = defaultFactory.defaultCipherSuites
 
     override fun createSocket(socket: Socket, host: String, port: Int, autoClose: Boolean): Socket {
-        return defaultFactory.createSocket(socket, null, port, autoClose) // TODO check works
+        return defaultFactory.createSocket(socket, null, port, autoClose)
     }
 
     override fun createSocket(host: String, port: Int): Socket = defaultFactory.createSocket(host, port)
