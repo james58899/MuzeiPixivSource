@@ -24,7 +24,7 @@ class ParallelDns(private vararg val dns: Dns) : Dns, CoroutineScope by Coroutin
                     // Concat exception cause
                     var cause: Throwable = e
                     while (cause.cause != null) cause = cause.cause!!
-                    cause.initCause(exception)
+                    exception?.let(cause::initCause)
 
                     exception = e
                 }
