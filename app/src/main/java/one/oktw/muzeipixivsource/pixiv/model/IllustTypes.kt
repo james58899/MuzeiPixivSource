@@ -6,8 +6,10 @@ import com.google.gson.annotations.SerializedName
 enum class IllustTypes {
     @SerializedName("illust")
     ILLUST,
+
     @SerializedName("manga")
     MANGA,
+
     @SerializedName("ugoira")
     UGOIRA
 }

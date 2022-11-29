@@ -2,7 +2,9 @@ package one.oktw.muzeipixivsource.pixiv.mode
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.*
+import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Daily
+import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
+import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Weekly
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON

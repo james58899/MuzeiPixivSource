@@ -190,6 +190,7 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
                     pipe.closeQuietly()
                 }
             }
+
             artwork.data.exists() -> return ParcelFileDescriptor.open(artwork.data, ParcelFileDescriptor.parseMode(mode))
             else -> launch(Dispatchers.IO) {
                 artwork.data.parentFile?.apply {

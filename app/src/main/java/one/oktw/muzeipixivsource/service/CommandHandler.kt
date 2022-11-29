@@ -55,6 +55,7 @@ class CommandHandler : BroadcastReceiver() {
                     type = "image/*"
                 }.let { context.startActivity(Intent.createChooser(it, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             }
+
             COMMAND_DOWNLOAD -> Unit // TODO
             else -> Unit
         }

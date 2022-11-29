@@ -5,7 +5,7 @@ import okhttp3.Request
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustList
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.GSON
-import java.util.*
+import java.util.Random
 
 class Bookmark {
     companion object {
