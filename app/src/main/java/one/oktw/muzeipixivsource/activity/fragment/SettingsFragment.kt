@@ -2,6 +2,7 @@ package one.oktw.muzeipixivsource.activity.fragment
 
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,7 @@ import one.oktw.muzeipixivsource.pixiv.PixivOAuth
 import one.oktw.muzeipixivsource.provider.MuzeiProvider
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.MUZEI_PACKAGE
 import one.oktw.muzeipixivsource.util.AppUtil.Companion.launchOrMarket
+import one.oktw.muzeipixivsource.util.getProviderInfoCompat
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var fetchCategory: PreferenceCategory
@@ -58,7 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         const val KEY_PIXIV_USER_USERNAME = "pixiv_user_username"
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
+    override fun onDisplayPreferenceDialog(preference: Preference) {
         if (preference is NumberPickerPreference) {
 
             NumberPickerPreference.Fragment.newInstance(preference.key).also {
@@ -90,7 +92,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateAccountInfo()
 
         preference.setOnPreferenceClickListener {
-            if (it.sharedPreferences.contains(KEY_PIXIV_ACCESS_TOKEN)) {
+            if (it.sharedPreferences?.contains(KEY_PIXIV_ACCESS_TOKEN) == true) {
                 AlertDialog.Builder(requireContext())
                     .setMessage(R.string.pref_pixiv_sign_out_confirm)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
@@ -126,7 +128,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun updateAccountInfo() {
         val account = findPreference<Preference>(KEY_ACCOUNT) ?: return
-        val pref = account.sharedPreferences
+        val pref = account.sharedPreferences ?: return
 
         if (pref.contains(KEY_PIXIV_ACCESS_TOKEN)) {
             account.title = getString(R.string.pref_pixiv_sign_out)
@@ -163,13 +165,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (newValue != null) {
             val context = requireContext()
 
-            ProviderContract.getContentUri(context.packageManager.getProviderInfo(ComponentName(context, MuzeiProvider::class.java), 0).authority)
+            ProviderContract.getContentUri(context.packageManager.getProviderInfoCompat(ComponentName(context, MuzeiProvider::class.java), PackageManager.ComponentInfoFlags.of(0)).authority)
                 .let { context.contentResolver.delete(it, null, null) }
         }
     }
 
     private fun logout() {
-        PixivOAuth.logout(preferenceManager.sharedPreferences)
+        val preference = preferenceManager.sharedPreferences ?: return
+        PixivOAuth.logout(preference)
         updateAccountInfo()
         updateFetchModePreference()
     }

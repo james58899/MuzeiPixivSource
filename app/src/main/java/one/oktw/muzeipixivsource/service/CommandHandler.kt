@@ -7,7 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
 import one.oktw.muzeipixivsource.provider.Commands
-import one.oktw.muzeipixivsource.provider.Commands.*
+import one.oktw.muzeipixivsource.provider.Commands.COMMAND_DOWNLOAD
+import one.oktw.muzeipixivsource.provider.Commands.COMMAND_OPEN
+import one.oktw.muzeipixivsource.provider.Commands.COMMAND_SHARE
+import one.oktw.muzeipixivsource.util.getParcelableExtraCompat
+import one.oktw.muzeipixivsource.util.getSerializableExtraCompat
 import java.io.File
 
 class CommandHandler : BroadcastReceiver() {
@@ -26,16 +30,16 @@ class CommandHandler : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        when (intent.getSerializableExtra(INTENT_COMMAND) as Commands) {
-            COMMAND_OPEN -> context.startActivity(Intent(Intent.ACTION_VIEW, intent.getParcelableExtra(INTENT_OPEN_URI)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        when (intent.getSerializableExtraCompat<Commands>(INTENT_COMMAND)) {
+            COMMAND_OPEN -> context.startActivity(Intent(Intent.ACTION_VIEW, intent.getParcelableExtraCompat(INTENT_OPEN_URI)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             COMMAND_SHARE -> {
                 val cacheFile = intent.getStringExtra(INTENT_SHARE_FILENAME)?.let {
                     context.cacheDir?.resolve("share")?.apply { mkdir() }?.apply { deleteOnExit() }?.resolve(it)
                 } ?: return
 
                 if (!cacheFile.exists()) {
-                    val source = intent.getParcelableExtra<Uri>(INTENT_SHARE_FILE_URI)?.let(context.contentResolver::openInputStream)
-                        ?: (intent.getSerializableExtra(INTENT_SHARE_CACHE_FILE) as File?)?.inputStream()
+                    val source = intent.getParcelableExtraCompat<Uri>(INTENT_SHARE_FILE_URI)?.let(context.contentResolver::openInputStream)
+                        ?: intent.getSerializableExtraCompat<File>(INTENT_SHARE_CACHE_FILE)?.inputStream()
                         ?: return
                     cacheFile.outputStream().use { file -> source.use { it.copyTo(file) } }
                 }
@@ -52,6 +56,7 @@ class CommandHandler : BroadcastReceiver() {
                 }.let { context.startActivity(Intent.createChooser(it, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             }
             COMMAND_DOWNLOAD -> Unit // TODO
+            else -> Unit
         }
     }
 }

@@ -69,6 +69,7 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
             }
 
             // Android API < 24
+            @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 // to new API
                 return shouldOverrideUrlLoading(view, object : WebResourceRequest {

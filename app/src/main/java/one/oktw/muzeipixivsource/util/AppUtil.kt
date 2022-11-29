@@ -19,7 +19,7 @@ class AppUtil {
 
         fun checkInstalled(context: Context, packageName: String): Boolean {
             return try {
-                context.packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+                context.packageManager.getPackageInfoCompat(packageName, PackageManager.PackageInfoFlags.of(PackageManager.GET_ACTIVITIES.toLong()))
                 true
             } catch (e: PackageManager.NameNotFoundException) {
                 false

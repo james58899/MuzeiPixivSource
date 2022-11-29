@@ -17,7 +17,12 @@ import com.google.android.apps.muzei.api.provider.Artwork
 import com.google.android.apps.muzei.api.provider.MuzeiArtProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -73,9 +78,9 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
     private lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate(): Boolean {
-        PreferenceManager.setDefaultValues(context, R.xml.prefragment, true)
+        PreferenceManager.setDefaultValues(requireContext(), R.xml.prefragment, true)
 
-        preference = PreferenceManager.getDefaultSharedPreferences(context)
+        preference = PreferenceManager.getDefaultSharedPreferences(requireContext())
         analytics = FirebaseAnalytics.getInstance(context!!)
 
         return super.onCreate()

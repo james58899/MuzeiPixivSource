@@ -9,7 +9,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.NumberPicker
 import androidx.preference.DialogPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceDialogFragmentCompat
 import one.oktw.muzeipixivsource.R
 
@@ -46,7 +45,7 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         value = getPersistedInt(defaultValue as? Int ?: value)
     }
 
-    override fun onSaveInstanceState(): Parcelable {
+    override fun onSaveInstanceState(): Parcelable? {
         return if (isPersistent) {
             super.onSaveInstanceState()
         } else {
@@ -65,7 +64,7 @@ class NumberPickerPreference(context: Context, attrs: AttributeSet) : DialogPref
         super.onRestoreInstanceState(state.superState)
     }
 
-    private class SavedState(superState: Parcelable) : Preference.BaseSavedState(superState) {
+    private class SavedState(superState: Parcelable?) : BaseSavedState(superState) {
         var value = 0
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
