@@ -8,7 +8,7 @@ class MirrorOutputStream(private val out: OutputStream, private val mirror: Outp
         out.write(b)
         try {
             mirror.write(b)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -16,7 +16,7 @@ class MirrorOutputStream(private val out: OutputStream, private val mirror: Outp
         out.write(b)
         try {
             mirror.write(b)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -24,7 +24,7 @@ class MirrorOutputStream(private val out: OutputStream, private val mirror: Outp
         out.write(b, off, len)
         try {
             mirror.write(b, off, len)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -32,7 +32,7 @@ class MirrorOutputStream(private val out: OutputStream, private val mirror: Outp
         out.flush()
         try {
             mirror.flush()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -40,7 +40,7 @@ class MirrorOutputStream(private val out: OutputStream, private val mirror: Outp
         out.close()
         try {
             mirror.close()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 

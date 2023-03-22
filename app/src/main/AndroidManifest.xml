@@ -41,7 +41,7 @@
         <receiver android:name=".service.CommandHandler" />
 
         <provider
-            android:name="one.oktw.muzeipixivsource.provider.MuzeiProvider"
+            android:name=".provider.MuzeiProvider"
             android:authorities="one.oktw.muzeipixivsource"
             android:description="@string/app_name"
             android:exported="true"
@@ -50,13 +50,13 @@
             <intent-filter>
                 <action android:name="com.google.android.apps.muzei.api.MuzeiArtProvider" />
             </intent-filter>
+
             <meta-data
                 android:name="settingsActivity"
                 android:value="one.oktw.muzeipixivsource.activity.SettingsActivity" />
         </provider>
-
         <provider
-            android:name="one.oktw.muzeipixivsource.provider.MuzeiDocumentProvider"
+            android:name=".provider.MuzeiDocumentProvider"
             android:authorities="one.oktw.muzeipixivsource.documents"
             android:exported="true"
             android:grantUriPermissions="true"
@@ -64,9 +64,7 @@
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
-        </provider>
-
-        <!-- Share file provider -->
+        </provider> <!-- Share file provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="one.oktw.muzeipixivsource.share"
@@ -77,4 +75,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+
 </manifest>
