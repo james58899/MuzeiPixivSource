@@ -31,6 +31,7 @@ import okhttp3.internal.closeQuietly
 import okio.Pipe
 import okio.buffer
 import one.oktw.muzeipixivsource.R
+import one.oktw.muzeipixivsource.activity.ShareActivity
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_BOOKMARK
 import one.oktw.muzeipixivsource.activity.fragment.SettingsFragment.Companion.FETCH_MODE_FALLBACK
@@ -59,10 +60,8 @@ import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.Monthly
 import one.oktw.muzeipixivsource.pixiv.mode.RankingCategory.valueOf
 import one.oktw.muzeipixivsource.pixiv.model.Illust
 import one.oktw.muzeipixivsource.pixiv.model.IllustTypes.ILLUST
-import one.oktw.muzeipixivsource.provider.Commands.COMMAND_OPEN
-import one.oktw.muzeipixivsource.provider.Commands.COMMAND_SHARE
-import one.oktw.muzeipixivsource.service.CommandHandler
 import one.oktw.muzeipixivsource.util.HttpUtils.httpClient
+import one.oktw.muzeipixivsource.util.getPendingIntentFlag
 import org.jsoup.Jsoup
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -231,47 +230,26 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
                 IconCompat.createWithResource(context, R.drawable.ic_open),
                 context.getString(R.string.button_open),
                 artwork.title ?: "",
-                PendingIntent.getBroadcast(
-                    context,
-                    artwork.id.toInt(),
-                    Intent(context, CommandHandler::class.java)
-                        .setAction("open")
-                        .putExtra(CommandHandler.INTENT_COMMAND, COMMAND_OPEN)
-                        .putExtra(CommandHandler.INTENT_OPEN_URI, artwork.webUri),
-                    0
-                )
+                PendingIntent.getActivity(context, artwork.id.toInt(), Intent(Intent.ACTION_VIEW, artwork.webUri), getPendingIntentFlag())
             ).apply { setShouldShowIcon(false) },
             RemoteActionCompat(
                 IconCompat.createWithResource(context, R.drawable.ic_share),
                 context.getString(R.string.button_share),
                 artwork.title ?: "",
-                PendingIntent.getBroadcast(
+                PendingIntent.getActivity(
                     context,
                     artwork.id.toInt(),
-                    Intent(context, CommandHandler::class.java)
-                        .setAction("share")
-                        .putExtra(CommandHandler.INTENT_COMMAND, COMMAND_SHARE)
-                        .putExtra(CommandHandler.INTENT_SHARE_TITLE, artwork.title)
-                        .putExtra(CommandHandler.INTENT_SHARE_TEXT, getShareText(artwork))
-                        .putExtra(CommandHandler.INTENT_SHARE_FILENAME, artwork.persistentUri!!.pathSegments.last())
-                        .putExtra(CommandHandler.INTENT_SHARE_FILE_URI, ContentUris.withAppendedId(contentUri, artwork.id))
-                        .putExtra(CommandHandler.INTENT_SHARE_CACHE_FILE, artwork.data),
-                    0
+                    Intent(context, ShareActivity::class.java)
+                        .putExtra(ShareActivity.INTENT_SHARE_TITLE, artwork.title)
+                        .putExtra(ShareActivity.INTENT_SHARE_TEXT, getShareText(artwork))
+                        .putExtra(ShareActivity.INTENT_SHARE_FILENAME, artwork.persistentUri!!.pathSegments.last())
+                        .putExtra(ShareActivity.INTENT_SHARE_FILE_URI, ContentUris.withAppendedId(contentUri, artwork.id))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK),
+                    getPendingIntentFlag()
                 )
             )
             // TODO save image
-//            RemoteActionCompat(
-//                IconCompat.createWithResource(context, R.drawable.ic_save),
-//                context.getString(R.string.button_save),
-//                artwork.title ?: "",
-//                PendingIntent.getBroadcast(
-//                    context,
-//                    artwork.id.toInt(),
-//                    Intent(context, CommandHandler::class.java)
-//                        .setAction("save"),
-//                    0
-//                )
-//            )
         )
     }
 

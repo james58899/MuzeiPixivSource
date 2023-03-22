@@ -1,5 +1,6 @@
 package one.oktw.muzeipixivsource.util
 
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -43,4 +44,10 @@ fun PackageManager.getPackageInfoCompat(packageName: String, flags: PackageManag
         @Suppress("DEPRECATION")
         getPackageInfo(packageName, flags.value.toInt())
     }
+}
+
+fun getPendingIntentFlag(): Int {
+    return if (Build.VERSION.SDK_INT >= 23) {
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    } else PendingIntent.FLAG_UPDATE_CURRENT
 }
