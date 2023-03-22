@@ -77,10 +77,11 @@ class MuzeiProvider : MuzeiArtProvider(), CoroutineScope by CoroutineScope(Corou
     private lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate(): Boolean {
-        PreferenceManager.setDefaultValues(requireContext(), R.xml.prefragment, true)
+        val context = context!!
+        PreferenceManager.setDefaultValues(context, R.xml.prefragment, true)
 
-        preference = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        analytics = FirebaseAnalytics.getInstance(context!!)
+        preference = PreferenceManager.getDefaultSharedPreferences(context)
+        analytics = FirebaseAnalytics.getInstance(context)
 
         return super.onCreate()
     }

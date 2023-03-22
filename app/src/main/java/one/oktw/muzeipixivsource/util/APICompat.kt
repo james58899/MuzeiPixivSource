@@ -37,12 +37,12 @@ fun PackageManager.getProviderInfoCompat(component: ComponentName, flags: Packag
     }
 }
 
-fun PackageManager.getPackageInfoCompat(packageName: String, flags: PackageManager.PackageInfoFlags): PackageInfo {
+fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int): PackageInfo {
     return if (Build.VERSION.SDK_INT >= 33) {
-        getPackageInfo(packageName, flags)
+        getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
     } else {
         @Suppress("DEPRECATION")
-        getPackageInfo(packageName, flags.value.toInt())
+        getPackageInfo(packageName, flags)
     }
 }
 
