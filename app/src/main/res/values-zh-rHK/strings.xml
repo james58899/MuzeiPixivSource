@@ -66,7 +66,7 @@
     <string name="pref_filter_illust">過濾插畫</string>
     <string name="button_open">開啟</string>
     <string name="button_share">分享</string>
-    <string name="button_download">下載</string>
+    <string name="button_save">下載</string>
     <string name="pref_fetch_direct">直接連線</string>
     <string name="pref_fetch_direct_summary">繞過網路檢測，無網路障礙建議關閉</string>
 </resources>
