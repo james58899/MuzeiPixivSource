@@ -2,11 +2,13 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
+        android:icon="@drawable/ic_open"
         android:key="muzei"
         android:summary="@string/pref_muzei_summary"
         android:title="@string/pref_muzei" />
     <PreferenceCategory android:title="@string/pref_title_account">
         <Preference
+            android:icon="@drawable/ic_account"
             android:key="account"
             android:summary="@string/pref_pixiv_summary"
             android:title="@string/pref_pixiv_sign_in" />
@@ -15,6 +17,7 @@
         android:key="fetch"
         android:title="@string/pref_title_fetch">
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:icon="@drawable/ic_number"
             android:defaultValue="30"
             android:key="fetch_number"
             android:summary="@string/pref_fetch_number_summary"
@@ -22,6 +25,7 @@
             app:max="500"
             app:min="1" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_photo_size"
             android:defaultValue="false"
             android:key="fetch_origin"
             android:summaryOff="@string/pref_fetch_origin_summary_off"
@@ -29,20 +33,24 @@
             android:title="@string/pref_fetch_origin" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
+            android:icon="@drawable/ic_shuffle"
             android:key="fetch_random"
             android:summary="@string/pref_fetch_random_summary"
             android:title="@string/pref_fetch_random" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_auto_delete"
             android:defaultValue="true"
             android:key="fetch_cleanup"
             android:summary="@string/pref_fetch_cleanup_summary"
             android:title="@string/pref_fetch_cleanup" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_broken_image"
             android:defaultValue="false"
             android:key="fetch_fallback"
             android:summary="@string/pref_fetch_fallback_summary"
             android:title="@string/pref_fetch_fallback" />
         <ListPreference
+            android:icon="@drawable/ic_collections"
             android:defaultValue="0"
             android:dialogTitle="@string/pref_fetch_mode_dialog"
             android:entries="@array/pref_fetch_mode_entities"
@@ -51,6 +59,7 @@
             android:summary="%s"
             android:title="@string/pref_fetch_mode" />
         <ListPreference
+            android:icon="@drawable/ic_list_numbered"
             android:defaultValue="Weekly"
             android:entries="@array/pref_fetch_ranking_mode"
             android:entryValues="@array/pref_fetch_ranking_value"
@@ -58,16 +67,19 @@
             android:summary="%s"
             android:title="@string/pref_fetch_ranking" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_privacy"
             android:defaultValue="false"
             android:key="fetch_mode_bookmark"
             android:summaryOff="@string/pref_fetch_bookmark_summary_off"
             android:summaryOn="@string/pref_fetch_bookmark_summary_on"
             android:title="@string/pref_fetch_bookmark" />
         <EditTextPreference
+            android:icon="@drawable/ic_cloud_download"
             android:key="fetch_mirror"
             android:title="@string/pref_fetch_mirror"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_connect"
             android:defaultValue="false"
             android:key="fetch_direct"
             android:summary="@string/pref_fetch_direct_summary"
@@ -77,23 +89,27 @@
         android:key="filter"
         android:title="@string/pref_title_filter">
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_filter"
             android:defaultValue="true"
             android:key="filter_safe"
             android:summaryOff="@string/pref_filter_safe_summary_off"
             android:summaryOn="@string/pref_filter_safe_summary_on"
             android:title="@string/pref_filter_safe" />
         <SwitchPreferenceCompat
+            android:icon="@drawable/ic_image_search"
             android:defaultValue="true"
             android:key="filter_illust"
             android:summary="@string/pref_filter_illust_summary"
             android:title="@string/pref_filter_illust" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:icon="@drawable/ic_aspect_ratio"
             android:defaultValue="1000"
             android:key="filter_size"
             android:summary="@string/pref_filter_size_summary"
             android:title="@string/pref_filter_size"
             app:min="0" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:icon="@drawable/ic_eye"
             android:defaultValue="0"
             android:key="filter_view"
             android:summary="@string/pref_filter_view_summary"
@@ -101,6 +117,7 @@
             app:max="100000"
             app:min="0" />
         <one.oktw.muzeipixivsource.activity.preference.NumberPickerPreference
+            android:icon="@drawable/ic_favorite"
             android:defaultValue="0"
             android:key="filter_bookmark"
             android:summary="@string/pref_filter_bookmark_summary"

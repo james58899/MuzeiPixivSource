@@ -5,4 +5,6 @@
     <color name="colorPrimaryNight">#121212</color>
     <color name="colorPrimaryDarkNight">#000000</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorIcon">#000000</color>
+    <color name="colorIconNight">#FFFFFF</color>
 </resources>
