@@ -28,12 +28,12 @@ inline fun <reified T : Parcelable> Intent.getParcelableExtraCompat(name: String
     }
 }
 
-fun PackageManager.getProviderInfoCompat(component: ComponentName, flags: PackageManager.ComponentInfoFlags): ProviderInfo {
+fun PackageManager.getProviderInfoCompat(component: ComponentName, flags: Int): ProviderInfo {
     return if (Build.VERSION.SDK_INT >= 33) {
-        getProviderInfo(component, flags)
+        getProviderInfo(component, PackageManager.ComponentInfoFlags.of(flags.toLong()))
     } else {
         @Suppress("DEPRECATION")
-        getProviderInfo(component, flags.value.toInt())
+        getProviderInfo(component, flags)
     }
 }
 

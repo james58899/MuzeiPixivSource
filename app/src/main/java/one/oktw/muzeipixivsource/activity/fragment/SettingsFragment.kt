@@ -2,7 +2,6 @@ package one.oktw.muzeipixivsource.activity.fragment
 
 import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -165,7 +164,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (newValue != null) {
             val context = requireContext()
 
-            ProviderContract.getContentUri(context.packageManager.getProviderInfoCompat(ComponentName(context, MuzeiProvider::class.java), PackageManager.ComponentInfoFlags.of(0)).authority)
+            ProviderContract.getContentUri(context.packageManager.getProviderInfoCompat(ComponentName(context, MuzeiProvider::class.java), 0).authority)
                 .let { context.contentResolver.delete(it, null, null) }
         }
     }
