@@ -1,0 +1,33 @@
+<p><a href="https://f-droid.org/packages/net.nurik.roman.muzei/">Muzei</a>'s <a href="https://www.pixiv.net /">Pixiv</a> Image source</p>
+
+<p>A small program that automatically captures illustrations on <a href="https://www.pixiv.net/">Pixiv</a> and sets them as wallpapers</p>
+
+<h2>Function</h2>
+
+<ul>
+<li>Scheduled updating (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> function)</li>
+<li>Image recording (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> feature)</li>
+<li>Updates only when using WiFi (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> feature)< /li>
+<li>Download original resolution image</li>
+<li>Random sorting</li>
+<li>Crawling quantity limit</li>
+<li>Automatically clear old images</li>
+<li>Quick sharing</li>
+<li>Set image download mirror</li>
+<li>SNI Bypass</li>
+<li>Supported modes
+
+<ul>
+<li>Recommended</li>
+<li>Favorites</li>
+<li>Ranking (daily, weekly, monthly)</li>
+</ul></li>
+<li>Filter
+
+<ul>
+<li>Image resolution</li>
+<li>Number of views</li>
+<li>Number of favorites</li>
+<li>R18 illusts</li>
+</ul></li>
+</ul>

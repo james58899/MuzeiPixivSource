@@ -1,0 +1,3 @@
+Pixiv source for Muzei
+
+Capture Pixiv illusts and sets them as wallpaper
