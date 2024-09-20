@@ -34,10 +34,7 @@
 5. 享受好看的桌布！
 
 ## 一些截圖
-![screenshot-01](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
-![screenshot-02](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
-![screenshot-03](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
-![screenshot-04](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+<img src="https://github.com/james58899/MuzeiPixivSource/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="50%"/><img src="https://github.com/james58899/MuzeiPixivSource/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="50%"/><img src="https://github.com/james58899/MuzeiPixivSource/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="50%"/><img src="https://github.com/james58899/MuzeiPixivSource/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="50%"/>
 
 [Muzei]: https://play.google.com/store/apps/details?id=net.nurik.roman.muzei
 [Muzei Pixiv Source]: https://play.google.com/store/apps/details?id=one.oktw.muzeipixivsource
