@@ -3,7 +3,12 @@
 
 一個定時自動抓取[Pixiv]上的插畫並設定為桌布的小程式
 
-<a href='https://play.google.com/store/apps/details?id=one.oktw.muzeipixivsource&utm_source=github&utm_campaign=badge&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="200pt" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+     alt="Get it on Google Play"
+     height="75">](https://play.google.com/store/apps/details?id=one.oktw.muzeipixivsource&utm_source=github&utm_campaign=badge&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="75">](https://f-droid.org/packages/one.oktw.muzeipixivsource/)
 
 ## 功能
 * 定時更換 ([Muzei] 功能)
