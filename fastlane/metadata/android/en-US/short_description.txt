@@ -1,3 +1,3 @@
 Pixiv source for Muzei
 
-Capture Pixiv illusts and sets them as wallpaper
+Fetch illustration from Pixiv and provides them as a wallpaper source for muzei
