@@ -1,0 +1,33 @@
+<p><a href="https://f-droid.org/packages/net.nurik.roman.muzei/">Muzei</a> 的 <a href="https://www.pixiv.net/">Pixiv</a> 圖片來源</p>
+
+<p>一個定時自動抓取<a href="https://www.pixiv.net/">Pixiv</a>上的插畫並設定為桌布的小程式</p>
+
+<h2>功能</h2>
+
+<ul>
+    <li>定時更換 (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> 功能)</li>
+    <li>圖片記錄 (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> 功能)</li>
+    <li>僅在使用WiFi時更新 (<a href="https://f-droid.org/packages/net.nurik.roman.muzei">Muzei</a> 功能)</li>
+    <li>下載原始解析度圖片</li>
+    <li>隨機排序</li>
+    <li>抓取數量限制</li>
+    <li>自動清除舊圖</li>
+    <li>快速分享</li>
+    <li>設定圖片下載鏡像</li>
+    <li>SNI Bypass</li>
+    <li>支援的模式
+        <ul>
+            <li>推薦</li>
+            <li>收藏</li>
+            <li>排行榜 (每日、每週、每月)</li>
+        </ul>
+    </li>
+    <li>過濾
+        <ul>
+            <li>圖片解析度</li>
+            <li>瀏覽次數</li>
+            <li>收藏次數</li>
+            <li>R18 圖片</li>
+        </ul>
+    </li>
+</ul>
