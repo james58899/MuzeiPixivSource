@@ -1,11 +1,15 @@
 package one.oktw.muzeipixivsource.activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -18,6 +22,7 @@ import java.security.SecureRandom
 
 class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispatchers.Main + SupervisorJob()) {
     companion object {
+        private const val TAG = "PixivSignIn"
         private val allowDomain = listOf("app-api.pixiv.net", "accounts.pixiv.net", "oauth.secure.pixiv.net")
     }
 
@@ -61,11 +66,23 @@ class PixivSignIn : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispat
                 // Disallow user use WebView browser other page
                 if (url.host !in allowDomain && !url.toString().startsWith("https://www.pixiv.net/logout.php")) {
                     if (url.host == "socialize.gigya.com") bypassDomainCheck = true else if (!bypassDomainCheck) {
-                        startActivity(Intent(Intent.ACTION_VIEW, url))
+                        try {
+                            startActivity(Intent(Intent.ACTION_VIEW, url))
+                        } catch (e: ActivityNotFoundException) {
+                            Log.w(TAG, "No app can handle $url", e)
+                            Toast.makeText(this@PixivSignIn, R.string.no_browser_available, Toast.LENGTH_SHORT).show()
+                        }
                         return true
                     }
                 } else if (bypassDomainCheck) bypassDomainCheck = false // Enable check if back to pixiv.
                 return false
+            }
+
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                super.onReceivedError(view, request, error)
+                if (request?.isForMainFrame == true) {
+                    Log.w(TAG, "Login WebView error ${error?.errorCode}: ${error?.description} @ ${request.url}")
+                }
             }
 
             // Android API < 24
